@@ -25,5 +25,8 @@
     "html-webpack-plugin": "^2.30.1",
     "webpack": "^3.5.3",
     "webpack-dev-server": "^2.7.1"
+  },
+  "dependencies": {
+    "papaparse": "^4.3.5"
   }
 }
