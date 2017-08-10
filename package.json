@@ -1,0 +1,16 @@
+{
+  "name": "groupifier",
+  "version": "1.0.0",
+  "description": "A simple tool automatically splitting participants into groups for a WCA competition.",
+  "keywords": [
+    "speedcubing",
+    "WCA competition",
+    "scrambling"
+  ],
+  "author": "Jonatan Kłosko",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonatanklosko/groupifier.git"
+  }
+}
