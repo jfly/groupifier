@@ -14,8 +14,8 @@ button.addEventListener('click', () => {
   parseCSV(fileInput.files[0], {
     header: true,
     complete: ({ data: rows }) => {
-      const people = rows.map(row => {
-        const person = { name: row['Name'], wcaId: row['WCA ID'], events: [] };
+      const people = _.sortBy(rows, 'Name').map(row => {
+        const person = { name: row['Name'], wcaId: row['WCA ID'], events: [], solving: {} };
         eventObjects.forEach(eventObject => {
           if(row[eventObject.id] === '1') {
             person.events.push(eventObject.id);
@@ -43,6 +43,10 @@ function assignGroups(allPeople, scramblersCount, stationsCount) {
       const groupsCount = calculateGroupsCount(eventId, people.length, stationsCount);
       const groupSize = Math.ceil(people.length / groupsCount);
       console.log("Event: ", eventId, "\nPeople: ", people.length, "\nGroups: ", groupsCount, "\nGroup size: ", groupSize, "\n\n---\n\n");
+      _.range(1, groupsCount + 1).forEach(groupNumber => {
+        const peopleSolving = people.slice((groupNumber - 1) * groupSize, groupNumber * groupSize);
+        peopleSolving.forEach(person => person.solving[eventId] = groupNumber);
+      })
     });
 }
 
