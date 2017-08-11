@@ -1,6 +1,7 @@
 import { parse as parseCSV } from 'papaparse';
+import _ from 'lodash';
 
-import { allEvents } from './events';
+import { eventObjects } from './events';
 
 const fileInput = document.getElementById('file-input');
 const stationsInput = document.getElementById('stations-input');
@@ -15,14 +16,42 @@ button.addEventListener('click', () => {
     complete: ({ data: rows }) => {
       const people = rows.map(row => {
         const person = { name: row['Name'], wcaId: row['WCA ID'], events: [] };
-        allEvents.forEach(event => {
-          if(row[event.id] === '1') {
-            person.events.push(event.id);
+        eventObjects.forEach(eventObject => {
+          if(row[eventObject.id] === '1') {
+            person.events.push(eventObject.id);
           }
         });
         return person;
       });
-      console.log(people);
+      assignGroups(people, scramblersCount, stationsCount);
     }
   })
 });
+
+function assignGroups(allPeople, scramblersCount, stationsCount) {
+  const peopleByEvent = {};
+  allPeople.forEach(person => {
+    person.events.forEach(eventId => {
+      peopleByEvent[eventId] = peopleByEvent[eventId] || [];
+      peopleByEvent[eventId].push(person);
+    });
+  });
+  _(peopleByEvent)
+    .toPairs()
+    .sortBy(([eventId, people]) => people.length) /* Start from the least popular events so that there are free people able to scramble them. */
+    .each(([eventId, people]) => {
+      const groupsCount = calculateGroupsCount(eventId, people.length, stationsCount);
+      const groupSize = Math.ceil(people.length / groupsCount);
+      console.log("Event: ", eventId, "\nPeople: ", people.length, "\nGroups: ", groupsCount, "\nGroup size: ", groupSize, "\n\n---\n\n");
+    });
+}
+
+function calculateGroupsCount(eventId, peopleCount, stationsCount) {
+  if(['333fm', '444bf', '555bf', '333mbf'].includes(eventId)) {
+    return 1;
+  } else {
+    const calculatedGroupSize = Math.ceil(stationsCount * 1.7); /* Suggested number of people in a single group. */
+    const calculatedGroupsCount = Math.round(peopleCount / calculatedGroupSize)
+    return Math.max(calculatedGroupsCount, 2); /* Force at least 2 groups. */
+  }
+}

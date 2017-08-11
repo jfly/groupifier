@@ -1,4 +1,4 @@
-export const allEvents = [
+export const eventObjects = [
   { id: '333',    name: 'Rubik\'s Cube'      },
   { id: '222',    name: '2x2x2 Cube'         },
   { id: '444',    name: '4x4x4 Cube'         },
