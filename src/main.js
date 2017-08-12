@@ -6,6 +6,7 @@ import { eventObjects } from './events';
 const fileInput = document.getElementById('file-input');
 const stationsInput = document.getElementById('stations-input');
 const scramblersInput = document.getElementById('scramblers-input');
+const externalJudgesInput = document.getElementById('external-judges-input');
 const button = document.getElementById('generate');
 /* These events consist of a single round and doesn't require assigning scramblers and judges. */
 const selfsufficientEvents = ['333fm', '444bf', '555bf', '333mbf'];
@@ -13,6 +14,7 @@ const selfsufficientEvents = ['333fm', '444bf', '555bf', '333mbf'];
 button.addEventListener('click', () => {
   const stationsCount = parseInt(stationsInput.value);
   const scramblersCount = parseInt(scramblersInput.value);
+  const externalJudgesCount = parseInt(externalJudgesInput.value);
   parseCSV(fileInput.files[0], {
     header: true,
     skipEmptyLines: true,
@@ -26,12 +28,12 @@ button.addEventListener('click', () => {
         });
         return person;
       });
-      assignGroups(people, scramblersCount, stationsCount);
+      assignGroups(people, scramblersCount, stationsCount, externalJudgesCount);
     }
   })
 });
 
-function assignGroups(allPeople, scramblersCount, stationsCount) {
+function assignGroups(allPeople, scramblersCount, stationsCount, externalJudgesCount) {
   const peopleByEvent = {};
   allPeople.forEach(person => {
     person.events.forEach(eventId => {
@@ -50,10 +52,13 @@ function assignGroups(allPeople, scramblersCount, stationsCount) {
         assignTask('solving', peopleSolving, eventId, groupNumber);
         if(!selfsufficientEvents.includes(eventId)) {
           const peopleScrambling = helpers(_.difference(people, peopleSolving), scramblersCount);
-          const judgesCount = Math.min(stationsCount, groupSize);
-          const peopleJudging = helpers(_.difference(allPeople, peopleSolving, peopleScrambling), judgesCount);
           assignTask('scrambling', peopleScrambling, eventId, groupNumber);
-          assignTask('judging', peopleJudging, eventId, groupNumber);
+          const judgesCount = Math.min(stationsCount, groupSize);
+          const additionalJudgesCount = judgesCount - externalJudgesCount;
+          if(additionalJudgesCount > 0) {
+            const peopleJudging = helpers(_.difference(allPeople, peopleSolving, peopleScrambling), additionalJudgesCount);
+            assignTask('judging', peopleJudging, eventId, groupNumber);
+          }
         }
       })
     });
