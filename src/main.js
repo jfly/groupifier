@@ -28,7 +28,7 @@ button.addEventListener('click', () => {
         });
         return person;
       });
-      assignGroups(people, scramblersCount, stationsCount, externalJudgesCount);
+      const groupsByEvent = assignGroups(people, scramblersCount, stationsCount, externalJudgesCount);
     }
   })
 });
@@ -41,27 +41,32 @@ function assignGroups(allPeople, scramblersCount, stationsCount, externalJudgesC
       peopleByEvent[eventId].push(person);
     });
   });
+  const groupsByEvent = {};
   _(peopleByEvent)
     .toPairs()
     .sortBy(([eventId, people]) => people.length) /* Start from the least popular events so that there are free people able to scramble them. */
     .each(([eventId, people]) => {
+      const groups = groupsByEvent[eventId] = [];
       const groupsCount = calculateGroupsCount(eventId, people.length, stationsCount);
       const groupSize = Math.ceil(people.length / groupsCount);
       _.range(1, groupsCount + 1).forEach(groupNumber => {
-        const peopleSolving = people.slice((groupNumber - 1) * groupSize, groupNumber * groupSize);
-        assignTask('solving', peopleSolving, eventId, groupNumber);
+        const group = { number: groupNumber };
+        group.peopleSolving = people.slice((groupNumber - 1) * groupSize, groupNumber * groupSize);
+        assignTask('solving', group.peopleSolving, eventId, groupNumber);
         if(!selfsufficientEvents.includes(eventId)) {
-          const peopleScrambling = helpers(_.difference(people, peopleSolving), scramblersCount);
-          assignTask('scrambling', peopleScrambling, eventId, groupNumber);
+          group.peopleScrambling = helpers(_.difference(people, group.peopleSolving), scramblersCount);
+          assignTask('scrambling', group.peopleScrambling, eventId, groupNumber);
           const judgesCount = Math.min(stationsCount, groupSize);
           const additionalJudgesCount = judgesCount - externalJudgesCount;
           if(additionalJudgesCount > 0) {
-            const peopleJudging = helpers(_.difference(allPeople, peopleSolving, peopleScrambling), additionalJudgesCount);
-            assignTask('judging', peopleJudging, eventId, groupNumber);
+            group.peopleJudging = helpers(_.difference(allPeople, group.peopleSolving, group.peopleScrambling), additionalJudgesCount);
+            assignTask('judging', group.peopleJudging, eventId, groupNumber);
           }
         }
-      })
+        groups.push(group);
+      });
     });
+  return groupsByEvent;
 }
 
 function calculateGroupsCount(eventId, peopleCount, stationsCount) {
