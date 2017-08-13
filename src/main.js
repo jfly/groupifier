@@ -101,11 +101,12 @@ function assignTask(task, people, eventId, groupNumber) {
 }
 
 function generatePersonalCardsPdf(people) {
+  const competitionEvents = _(people).map('events').flatten().uniq().value();
   const personalCards = people.map(person => {
     const table = _(eventObjects)
       .map(eventObject => {
         const groupsText = task => ({ text: (person[task][eventObject.id] || []).join(', '), alignment: 'center' });
-        if(['solving', 'judging', 'scrambling'].some(task => person[task][eventObject.id])) {
+        if(competitionEvents.includes(eventObject.id)) {
           return [eventObject.name, groupsText('solving'), groupsText('scrambling'), groupsText('judging')];
         }
       })
@@ -113,13 +114,18 @@ function generatePersonalCardsPdf(people) {
       .value();
     return [
       { text: person.name, bold: true },
-      { table: {
-        body: [['Event', 'Solving', 'Scrambling', 'Judging'], ...table] },
-        layout: { paddingLeft: () => 2, paddingRight: () => 2, paddingTop: () => 1, paddingBottom: () => 1} }
+      {
+        table: {
+          body: [['Event', 'Solving', 'Scrambling', 'Judging'], ...table]
+        },
+        layout: { paddingLeft: () => 2, paddingRight: () => 2, paddingTop: () => 1, paddingBottom: () => 1 }
+      }
     ];
   });
   const documentDefinition = {
-    content: _.chunk(personalCards, 3).map(cards => ({ columns: cards, fontSize: 8, margin: [0, 0, 0, 5] , unbreakable: true })),
+    content: _.chunk(personalCards, 3).map(cards => (
+      { columns: cards, fontSize: 8, margin: [0, 0, 0, 10] , unbreakable: true }
+    )),
     pageMargins: [5, 5, 5, 5]
   };
   pdfMake.createPdf(documentDefinition).open();
