@@ -3,6 +3,7 @@ const path = require('path');
 
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const sourcePath = path.resolve(__dirname, 'src');
 const destinationPath = path.resolve(__dirname, 'build');
@@ -25,6 +26,12 @@ let config = {
       test: /\.js$/,
       use: ['babel-loader?presets[]=es2015'],
       exclude: /node_modules/
+    }, {
+      test: /\.css$/,
+      use: ExtractTextPlugin.extract({
+        fallback: 'style-loader',
+        use: 'css-loader'
+      })
     }]
   },
   plugins: [
@@ -33,7 +40,8 @@ let config = {
       template: '../index.ejs',
       inject: 'body',
       base: production ? '/groupifier/' : '/' /* Repository path for GitHub pages. */
-    })
+    }),
+    new ExtractTextPlugin({ filename: '[name].[hash].css', disable: !production })
   ],
   devServer: {
     contentBase: destinationPath

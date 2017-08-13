@@ -1,3 +1,7 @@
+import 'material-design-lite/material.css';
+import 'material-design-lite/material.js';
+import '../main.css';
+
 import { parse as parseCSV } from 'papaparse';
 import _ from 'lodash';
 import pdfMake from 'pdfmake/build/pdfmake';
@@ -6,6 +10,7 @@ pdfMake.vfs = pdfMakeFonts.pdfMake.vfs;
 
 import { eventObjects } from './events';
 
+const fileNameInput = document.getElementById('file-name-input');
 const fileInput = document.getElementById('file-input');
 const stationsInput = document.getElementById('stations-input');
 const scramblersInput = document.getElementById('scramblers-input');
@@ -13,6 +18,11 @@ const externalJudgesInput = document.getElementById('external-judges-input');
 const button = document.getElementById('generate');
 /* These events consist of a single round and doesn't require assigning scramblers and judges. */
 const selfsufficientEvents = ['333fm', '444bf', '555bf', '333mbf'];
+
+fileInput.addEventListener('change', event => {
+  fileNameInput.value = event.target.files[0].name;
+  fileNameInput.parentNode.MaterialTextfield.checkDirty();
+});
 
 button.addEventListener('click', () => {
   const stationsCount = parseInt(stationsInput.value);

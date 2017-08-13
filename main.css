@@ -1,0 +1,8 @@
+/* Roboto font */
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500,700');
+/* Material icons */
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+.hidden-file-input {
+  display: none;
+}
