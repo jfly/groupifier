@@ -33,6 +33,7 @@ button.addEventListener('click', () => {
       });
       const groupsByEvent = assignGroups(people, scramblersCount, stationsCount, externalJudgesCount);
       generatePersonalCardsPdf(people);
+      generateSummaryPdf(groupsByEvent);
     }
   })
 });
@@ -103,15 +104,12 @@ function assignTask(task, people, eventId, groupNumber) {
 function generatePersonalCardsPdf(people) {
   const competitionEvents = _(people).map('events').flatten().uniq().value();
   const personalCards = people.map(person => {
-    const table = _(eventObjects)
+    const table = eventObjects
+      .filter(eventObject => competitionEvents.includes(eventObject.id))
       .map(eventObject => {
         const groupsText = task => ({ text: (person[task][eventObject.id] || []).join(', '), alignment: 'center' });
-        if(competitionEvents.includes(eventObject.id)) {
-          return [eventObject.name, groupsText('solving'), groupsText('scrambling'), groupsText('judging')];
-        }
-      })
-      .compact()
-      .value();
+        return [eventObject.name, groupsText('solving'), groupsText('scrambling'), groupsText('judging')];
+      });
     return [
       { text: person.name, bold: true },
       {
@@ -127,6 +125,38 @@ function generatePersonalCardsPdf(people) {
       { columns: cards, fontSize: 8, margin: [0, 0, 0, 10] , unbreakable: true }
     )),
     pageMargins: [5, 5, 5, 5]
+  };
+  pdfMake.createPdf(documentDefinition).open();
+}
+
+function generateSummaryPdf(groupsByEvent) {
+  const documentDefinition = {
+    content: eventObjects
+      .filter(eventObject => groupsByEvent[eventObject.id])
+      .map(eventObject =>
+        groupsByEvent[eventObject.id].map(group =>
+          [
+            {
+              unbreakable: true,
+              margin: [0, 0, 0, 10],
+              stack: [
+                { text: `${eventObject.name} - Group ${group.number}`, bold: true, fontSize: 14, margin: [0, 0, 0, 5] },
+                {
+                  fontSize: 8,
+                  columns: ['Solving', 'Scrambling', 'Judging'].map(type => {
+                    const people = group[`people${type}`];
+                    if(!people) return {};
+                    return [
+                      { text: `${type} (${people.length})`, bold: true, fontSize: 10, margin: [0, 0, 0, 2] },
+                      { ul: _.map(people, 'name').sort() }
+                    ];
+                  })
+                }
+              ]
+            }
+          ]
+        )
+      )
   };
   pdfMake.createPdf(documentDefinition).open();
 }
