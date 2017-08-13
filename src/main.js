@@ -1,5 +1,8 @@
 import { parse as parseCSV } from 'papaparse';
 import _ from 'lodash';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfMakeFonts from 'pdfmake/build/vfs_fonts';
+pdfMake.vfs = pdfMakeFonts.pdfMake.vfs;
 
 import { eventObjects } from './events';
 
@@ -29,6 +32,7 @@ button.addEventListener('click', () => {
         return person;
       });
       const groupsByEvent = assignGroups(people, scramblersCount, stationsCount, externalJudgesCount);
+      generatePersonalCardsPdf(people);
     }
   })
 });
@@ -94,4 +98,29 @@ function assignTask(task, people, eventId, groupNumber) {
     person[task][eventId] = person[task][eventId] || [];
     person[task][eventId].push(groupNumber);
   });
+}
+
+function generatePersonalCardsPdf(people) {
+  const personalCards = people.map(person => {
+    const table = _(eventObjects)
+      .map(eventObject => {
+        const groupsText = task => ({ text: (person[task][eventObject.id] || []).join(', '), alignment: 'center' });
+        if(['solving', 'judging', 'scrambling'].some(task => person[task][eventObject.id])) {
+          return [eventObject.name, groupsText('solving'), groupsText('scrambling'), groupsText('judging')];
+        }
+      })
+      .compact()
+      .value();
+    return [
+      { text: person.name, bold: true },
+      { table: {
+        body: [['Event', 'Solving', 'Scrambling', 'Judging'], ...table] },
+        layout: { paddingLeft: () => 2, paddingRight: () => 2, paddingTop: () => 1, paddingBottom: () => 1} }
+    ];
+  });
+  const documentDefinition = {
+    content: _.chunk(personalCards, 3).map(cards => ({ columns: cards, fontSize: 8, margin: [0, 0, 0, 5] , unbreakable: true })),
+    pageMargins: [5, 5, 5, 5]
+  };
+  pdfMake.createPdf(documentDefinition).open();
 }
