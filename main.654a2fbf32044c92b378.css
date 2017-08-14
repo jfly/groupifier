@@ -11477,6 +11477,10 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
 /* Roboto font */
 /* Material icons */
 
+html, body {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
 .hidden-file-input {
   display: none;
 }
