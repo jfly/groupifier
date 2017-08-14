@@ -18,3 +18,6 @@ export const eventObjects = [
   { id: '555bf',  name: '5x5x5 Blindfolded'  },
   { id: '333mbf', name: '3x3x3 Multi-Blind'  }
 ];
+
+/* These events consist of a single round and doesn't require assigning scramblers and judges. */
+export const selfsufficientEvents = ['333fm', '444bf', '555bf', '333mbf'];
