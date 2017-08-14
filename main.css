@@ -3,6 +3,10 @@
 /* Material icons */
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
+html, body {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
 .hidden-file-input {
   display: none;
 }
