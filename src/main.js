@@ -20,7 +20,21 @@ const button = document.getElementById('generate');
 fileInput.addEventListener('change', event => {
   fileNameInput.value = event.target.files[0].name;
   fileNameInput.parentNode.MaterialTextfield.checkDirty();
+  fileNameInput.parentNode.MaterialTextfield.checkValidity();
+  updateButtonState();
 });
+/* Enable/disable the button depending on the form validity. */
+const inputs = _.toArray(document.querySelectorAll('input[type="text"]'));
+inputs.forEach(element => {
+  element.addEventListener('input', () => {
+    element.required = true; /* Setting this sooner results in validation messages shown on the page load. See: https://github.com/google/material-design-lite/issues/1502 */
+    updateButtonState();
+  });
+});
+
+function updateButtonState() {
+  button.disabled = !inputs.every(input => input.value && input.validity.valid);
+}
 
 button.addEventListener('click', () => {
   const stationsCount = parseInt(stationsInput.value);
@@ -35,7 +49,7 @@ button.addEventListener('click', () => {
       createPersonalCardsPdf(people).open();
       createSummaryPdf(groupsByEvent).open();
     }
-  })
+  });
 });
 
 function peopleFromCsvRows(rows) {

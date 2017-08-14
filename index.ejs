@@ -12,29 +12,33 @@
       <div class="mdl-cell mdl-cell--4-col">
         <form action="#">
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="file-name-input" disabled>
+            <input class="mdl-textfield__input" type="text" id="file-name-input" disabled pattern=".*\.csv">
             <label class="mdl-textfield__label" for="filen-name-input">Registrations CSV</label>
+            <span class="mdl-textfield__error">must be a CSV file</span>
           </div>
           <div class="mdl-button mdl-button--primary mdl-button--icon">
             <label for="file-input">
               <i class="material-icons">attach_file</i>
             </label>
-            <input class="hidden-file-input" type="file" id="file-input">
+            <input class="hidden-file-input" type="file" id="file-input" accept=".csv">
           </div>
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="stations-input">
+            <input class="mdl-textfield__input" type="text" id="stations-input" pattern="\d*">
             <label class="mdl-textfield__label" for="stations-input">Stations count</label>
+            <span class="mdl-textfield__error">must be a natural number</span>
           </div>
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="scramblers-input">
+            <input class="mdl-textfield__input" type="text" id="scramblers-input" pattern="\d*">
             <label class="mdl-textfield__label" for="scramblers-input">Scramblers count</label>
+            <span class="mdl-textfield__error">must be a natural number</span>
           </div>
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="external-judges-input">
+            <input class="mdl-textfield__input" type="text" id="external-judges-input" pattern="\d*">
             <label class="mdl-textfield__label" for="external-judges-input">External judges count</label>
+            <span class="mdl-textfield__error">must be a natural number</span>
           </div>
           <div>
-            <button class="mdl-button mdl-js-button mdl-button--raised" type="button" id="generate">Generate</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised" type="button" id="generate" disabled>Generate</button>
           </div>
         </form>
       </div>
