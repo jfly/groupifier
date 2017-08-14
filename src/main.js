@@ -16,6 +16,7 @@ const scramblersInput = document.getElementById('scramblers-input');
 const externalJudgesInput = document.getElementById('external-judges-input');
 const button = document.getElementById('generate');
 
+/* Show the selected file name within the appropriate input. */
 fileInput.addEventListener('change', event => {
   fileNameInput.value = event.target.files[0].name;
   fileNameInput.parentNode.MaterialTextfield.checkDirty();
@@ -29,18 +30,22 @@ button.addEventListener('click', () => {
     header: true,
     skipEmptyLines: true,
     complete: ({ data: rows }) => {
-      const people = _.sortBy(rows, 'Name').map(row => {
-        const person = { name: row['Name'], wcaId: row['WCA ID'], events: [], solving: {}, scrambling: {}, judging: {} };
-        eventObjects.forEach(eventObject => {
-          if(row[eventObject.id] === '1') {
-            person.events.push(eventObject.id);
-          }
-        });
-        return person;
-      });
+      const people = peopleFromCsvRows(rows);
       const groupsByEvent = assignGroups(people, scramblersCount, stationsCount, externalJudgesCount);
       createPersonalCardsPdf(people).open();
       createSummaryPdf(groupsByEvent).open();
     }
   })
 });
+
+function peopleFromCsvRows(rows) {
+  return _.sortBy(rows, 'Name').map(row => {
+    const person = { name: row['Name'], wcaId: row['WCA ID'], events: [], solving: {}, scrambling: {}, judging: {} };
+    eventObjects.forEach(eventObject => {
+      if(row[eventObject.id] === '1') {
+        person.events.push(eventObject.id);
+      }
+    });
+    return person;
+  });
+}
