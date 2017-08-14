@@ -50,7 +50,6 @@ let config = {
 
 if(production) {
   config.plugins.push(
-    new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin({
       mangle: true,
       compress: {
