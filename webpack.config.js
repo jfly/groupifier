@@ -4,6 +4,7 @@ const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 const sourcePath = path.resolve(__dirname, 'src');
 const destinationPath = path.resolve(__dirname, 'build');
@@ -55,7 +56,8 @@ if(production) {
       compress: {
         warnings: false
       }
-    })
+    }),
+    new FaviconsWebpackPlugin('../assets/favicon.svg')
   );
 }
 
