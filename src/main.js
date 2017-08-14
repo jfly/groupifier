@@ -1,6 +1,6 @@
 import 'material-design-lite/material.css';
 import 'material-design-lite/material.js';
-import '../main.css';
+import '../assets/main.css';
 
 import { parse as parseCSV } from 'papaparse';
 import _ from 'lodash';
