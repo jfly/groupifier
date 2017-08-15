@@ -42,7 +42,11 @@
             <label class="mdl-textfield__label" for="external-judges-input">External judges count</label>
             <span class="mdl-textfield__error">must be a natural number</span>
           </div>
-          <div>
+          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="skip-newcomers-input">
+            <input class="mdl-checkbox__input" type="checkbox" id="skip-newcomers-input" checked>
+            <span class="mdl-checkbox__label">Skip newcomers during tasks assignment</span>
+          </label>
+          <div class="actions">
             <button class="mdl-button mdl-js-button mdl-button--raised" type="button" id="generate" disabled>Generate</button>
           </div>
         </form>

@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import { eventObjects, selfsufficientEvents } from './events';
 
-export function assignGroups(allPeople, scramblersCount, stationsCount, externalJudgesCount) {
+export function assignGroups(allPeople, scramblersCount, stationsCount, externalJudgesCount, skipNewcomers) {
   const peopleByEvent = {};
   allPeople.forEach(person => {
     person.events.forEach(eventId => {
@@ -23,12 +23,12 @@ export function assignGroups(allPeople, scramblersCount, stationsCount, external
         group.peopleSolving = people.slice((groupNumber - 1) * groupSize, groupNumber * groupSize);
         assignTask('solving', group.peopleSolving, eventId, groupNumber);
         if(!selfsufficientEvents.includes(eventId)) {
-          group.peopleScrambling = helpers(_.difference(people, group.peopleSolving), scramblersCount);
+          group.peopleScrambling = helpers(_.difference(people, group.peopleSolving), scramblersCount, skipNewcomers);
           assignTask('scrambling', group.peopleScrambling, eventId, groupNumber);
           const judgesCount = Math.min(stationsCount, groupSize);
           const additionalJudgesCount = judgesCount - externalJudgesCount;
           if(additionalJudgesCount > 0) {
-            group.peopleJudging = helpers(_.difference(allPeople, group.peopleSolving, group.peopleScrambling), additionalJudgesCount);
+            group.peopleJudging = helpers(_.difference(allPeople, group.peopleSolving, group.peopleScrambling), additionalJudgesCount, skipNewcomers);
             assignTask('judging', group.peopleJudging, eventId, groupNumber);
           }
         }
@@ -48,11 +48,11 @@ function calculateGroupsCount(eventId, peopleCount, stationsCount) {
   }
 }
 
-function helpers(people, count) {
+function helpers(people, count, skipNewcomers) {
   return _(people)
     .sortBy(person => {
       const helpRate = (_.size(person.scrambling) + _.size(person.judging)) / _.size(person.events);
-      return [person.wcaId === "", helpRate];
+      return [skipNewcomers && person.wcaId === "", helpRate];
     })
     .take(count)
     .value();

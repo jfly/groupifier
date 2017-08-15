@@ -14,6 +14,7 @@ const fileInput = document.getElementById('file-input');
 const stationsInput = document.getElementById('stations-input');
 const scramblersInput = document.getElementById('scramblers-input');
 const externalJudgesInput = document.getElementById('external-judges-input');
+const skipNewcomersInput = document.getElementById('skip-newcomers-input');
 const button = document.getElementById('generate');
 
 /* Show the selected file name within the appropriate input. */
@@ -40,12 +41,13 @@ button.addEventListener('click', () => {
   const stationsCount = parseInt(stationsInput.value);
   const scramblersCount = parseInt(scramblersInput.value);
   const externalJudgesCount = parseInt(externalJudgesInput.value);
+  const skipNewcomers = skipNewcomersInput.checked;
   parseCSV(fileInput.files[0], {
     header: true,
     skipEmptyLines: true,
     complete: ({ data: rows }) => {
       const people = peopleFromCsvRows(rows);
-      const groupsByEvent = assignGroups(people, scramblersCount, stationsCount, externalJudgesCount);
+      const groupsByEvent = assignGroups(people, scramblersCount, stationsCount, externalJudgesCount, skipNewcomers);
       createPersonalCardsPdf(people).open();
       createSummaryPdf(groupsByEvent).open();
     }
