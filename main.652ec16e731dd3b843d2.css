@@ -11484,3 +11484,7 @@ html, body {
 .hidden-file-input {
   display: none;
 }
+
+.actions {
+  padding-top: 20px;
+}
