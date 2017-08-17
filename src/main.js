@@ -13,7 +13,7 @@ const fileNameInput = document.getElementById('file-name-input');
 const fileInput = document.getElementById('file-input');
 const stationsInput = document.getElementById('stations-input');
 const scramblersInput = document.getElementById('scramblers-input');
-const externalJudgesInput = document.getElementById('external-judges-input');
+const staffJudgesInput = document.getElementById('staff-judges-input');
 const skipNewcomersInput = document.getElementById('skip-newcomers-input');
 const button = document.getElementById('generate');
 
@@ -40,14 +40,14 @@ function updateButtonState() {
 button.addEventListener('click', () => {
   const stationsCount = parseInt(stationsInput.value);
   const scramblersCount = parseInt(scramblersInput.value);
-  const externalJudgesCount = parseInt(externalJudgesInput.value);
+  const staffJudgesCount = parseInt(staffJudgesInput.value);
   const skipNewcomers = skipNewcomersInput.checked;
   parseCSV(fileInput.files[0], {
     header: true,
     skipEmptyLines: true,
     complete: ({ data: rows }) => {
       const people = peopleFromCsvRows(rows);
-      const groupsByEvent = assignGroups(people, scramblersCount, stationsCount, externalJudgesCount, skipNewcomers);
+      const groupsByEvent = assignGroups(people, scramblersCount, stationsCount, staffJudgesCount, skipNewcomers);
       createPersonalCardsPdf(people).open();
       createSummaryPdf(groupsByEvent).open();
     }

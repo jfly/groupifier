@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import { eventObjects, selfsufficientEvents } from './events';
 
-export function assignGroups(allPeople, scramblersCount, stationsCount, externalJudgesCount, skipNewcomers) {
+export function assignGroups(allPeople, scramblersCount, stationsCount, staffJudgesCount, skipNewcomers) {
   const peopleByEvent = {};
   allPeople.forEach(person => {
     person.events.forEach(eventId => {
@@ -26,7 +26,7 @@ export function assignGroups(allPeople, scramblersCount, stationsCount, external
           group.peopleScrambling = helpers(_.difference(people, group.peopleSolving), scramblersCount, skipNewcomers);
           assignTask('scrambling', group.peopleScrambling, eventId, groupNumber);
           const judgesCount = Math.min(stationsCount, groupSize);
-          const additionalJudgesCount = judgesCount - externalJudgesCount;
+          const additionalJudgesCount = judgesCount - staffJudgesCount;
           if(additionalJudgesCount > 0) {
             group.peopleJudging = helpers(_.difference(allPeople, group.peopleSolving, group.peopleScrambling), additionalJudgesCount, skipNewcomers);
             assignTask('judging', group.peopleJudging, eventId, groupNumber);
