@@ -51,7 +51,7 @@ function calculateGroupsCount(eventId, peopleCount, stationsCount) {
 function helpers(people, count, skipNewcomers) {
   return _(people)
     .sortBy(person => {
-      const helpRate = (_.size(person.scrambling) + _.size(person.judging)) / _.size(person.events);
+      const helpRate = (_.sum(_.map(person.scrambling, _.size)) + _.sum(_.map(person.judging, _.size))) / _.size(person.events);
       return [skipNewcomers && person.wcaId === "", helpRate];
     })
     .take(count)
