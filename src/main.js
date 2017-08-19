@@ -47,9 +47,10 @@ button.addEventListener('click', () => {
     skipEmptyLines: true,
     complete: ({ data: rows }) => {
       const people = peopleFromCsvRows(rows);
-      const groupsByEvent = assignGroups(people, scramblersCount, stationsCount, staffJudgesCount, skipNewcomers);
-      createPersonalCardsPdf(people).open();
-      createSummaryPdf(groupsByEvent).open();
+      assignGroups(people, scramblersCount, stationsCount, staffJudgesCount, skipNewcomers).then(groupsByEvent => {
+        createPersonalCardsPdf(people).open();
+        createSummaryPdf(groupsByEvent).open();
+      });
     }
   });
 });

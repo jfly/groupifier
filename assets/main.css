@@ -14,3 +14,8 @@ html, body {
 .actions {
   padding-top: 20px;
 }
+
+.scramblers-dialog.mdl-dialog > .mdl-dialog__content {
+  overflow: auto;
+  height: 400px;
+}
