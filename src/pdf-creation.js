@@ -35,7 +35,8 @@ export function createPersonalCardsPdf(people) {
   return pdfMake.createPdf(documentDefinition);
 }
 
-export function createSummaryPdf(groupsByEvent) {
+export function createSummaryPdf(eventsWithGroups) {
+  const groupsByEvent = _.fromPairs(eventsWithGroups);
   const documentDefinition = {
     content: eventObjects
       .filter(eventObject => groupsByEvent[eventObject.id])

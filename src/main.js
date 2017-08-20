@@ -6,7 +6,7 @@ import { parse as parseCSV } from 'papaparse';
 import _ from 'lodash';
 
 import { eventObjects } from './events';
-import { assignGroups } from './groups-assignment';
+import { assignGroups, assignScrambling, assignJudging } from './groups-assignment';
 import { createPersonalCardsPdf, createSummaryPdf } from './pdf-creation';
 
 const fileNameInput = document.getElementById('file-name-input');
@@ -47,9 +47,11 @@ button.addEventListener('click', () => {
     skipEmptyLines: true,
     complete: ({ data: rows }) => {
       const people = peopleFromCsvRows(rows);
-      assignGroups(people, scramblersCount, stationsCount, staffJudgesCount, skipNewcomers).then(groupsByEvent => {
+      const eventsWithGroups = assignGroups(people, stationsCount);
+      assignScrambling(eventsWithGroups, scramblersCount, skipNewcomers).then(() => {
+        assignJudging(people, eventsWithGroups, stationsCount, staffJudgesCount, skipNewcomers);
         createPersonalCardsPdf(people).open();
-        createSummaryPdf(groupsByEvent).open();
+        createSummaryPdf(eventsWithGroups).open();
       });
     }
   });
