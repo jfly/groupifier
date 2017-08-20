@@ -29,7 +29,7 @@ export function assignGroups(allPeople, stationsCount) {
     .value();
 }
 
-export function assignScrambling(eventsWithGroups, scramblersCount, skipNewcomers) {
+export function assignScrambling(eventsWithGroups, scramblersCount, askForScramblers, skipNewcomers) {
   return _(eventsWithGroups)
     .reject(([eventId, groups]) => selfsufficientEvents.includes(eventId))
     .flatMap(([eventId, groups]) => {
@@ -37,7 +37,10 @@ export function assignScrambling(eventsWithGroups, scramblersCount, skipNewcomer
       return groups.map(group => {
         return () => {
           const potentialScramblers = sortPeopleToHelp(_.difference(people, group.peopleSolving), skipNewcomers);
-          return selectScramblers(potentialScramblers, scramblersCount).then(scramblers => {
+          const scramblersPromise = askForScramblers
+                                  ? selectScramblers(potentialScramblers, scramblersCount)
+                                  : Promise.resolve(_.take(potentialScramblers, scramblersCount));
+          return scramblersPromise.then(scramblers => {
             group.peopleScrambling = scramblers;
             assignTask('scrambling', scramblers, eventId, group.number);
           });

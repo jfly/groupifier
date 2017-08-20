@@ -14,6 +14,7 @@ const fileInput = document.getElementById('file-input');
 const stationsInput = document.getElementById('stations-input');
 const scramblersInput = document.getElementById('scramblers-input');
 const staffJudgesInput = document.getElementById('staff-judges-input');
+const askForScramblersInput = document.getElementById('ask-for-scramblers-input');
 const skipNewcomersInput = document.getElementById('skip-newcomers-input');
 const button = document.getElementById('generate');
 
@@ -41,6 +42,7 @@ button.addEventListener('click', () => {
   const stationsCount = parseInt(stationsInput.value);
   const scramblersCount = parseInt(scramblersInput.value);
   const staffJudgesCount = parseInt(staffJudgesInput.value);
+  const askForScramblers = askForScramblersInput.checked;
   const skipNewcomers = skipNewcomersInput.checked;
   parseCSV(fileInput.files[0], {
     header: true,
@@ -48,7 +50,7 @@ button.addEventListener('click', () => {
     complete: ({ data: rows }) => {
       const people = peopleFromCsvRows(rows);
       const eventsWithGroups = assignGroups(people, stationsCount);
-      assignScrambling(eventsWithGroups, scramblersCount, skipNewcomers).then(() => {
+      assignScrambling(eventsWithGroups, scramblersCount, askForScramblers, skipNewcomers).then(() => {
         assignJudging(people, eventsWithGroups, stationsCount, staffJudgesCount, skipNewcomers);
         createPersonalCardsPdf(people).open();
         createSummaryPdf(eventsWithGroups).open();
