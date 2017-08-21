@@ -15,7 +15,11 @@ html, body {
   padding-top: 20px;
 }
 
-.scramblers-dialog.mdl-dialog > .mdl-dialog__content {
+.scramblers-dialog {
+  width: 400px;
+}
+
+.scramblers-dialog .scramblers-list {
   overflow: auto;
-  height: 400px;
+  height: 300px;
 }

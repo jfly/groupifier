@@ -1,8 +1,12 @@
 import dialogPolyfill from 'dialog-polyfill';
+import _ from 'lodash';
 
-const readyButton = document.getElementsByTagName('dialog')[0].getElementsByTagName('button')[0];
-const list = document.getElementsByTagName('ul')[0];
+import { eventObjects } from './events';
+
 const dialog = document.getElementsByTagName('dialog')[0];
+const readyButton = dialog.getElementsByTagName('button')[0];
+const eventWithGroupHeader = dialog.getElementsByClassName('event-with-group')[0];
+const list = dialog.getElementsByTagName('ul')[0];
 
 dialogPolyfill.registerDialog(dialog);
 
@@ -11,7 +15,8 @@ readyButton.addEventListener('click', () => {
   readyButton.disabled = true;
 });
 
-export function selectScramblers(people, requiredCount) {
+export function selectScramblers(people, requiredCount, eventId, groupNumber) {
+  const eventObject = _.find(eventObjects, ['id', eventId]);
   const scramblers = [];
   /* Remove current list items. */
   while(list.lastChild) {
@@ -20,6 +25,7 @@ export function selectScramblers(people, requiredCount) {
   if(!dialog.open) {
     dialog.showModal();
   }
+  eventWithGroupHeader.innerText = `${eventObject.name} - Round ${groupNumber}`;
   people.forEach(person => {
     list.insertAdjacentHTML('beforeend', `
       <li class="mdl-list__item">

@@ -38,7 +38,7 @@ export function assignScrambling(eventsWithGroups, scramblersCount, askForScramb
         return () => {
           const potentialScramblers = sortPeopleToHelp(_.difference(people, group.peopleSolving), skipNewcomers);
           const scramblersPromise = askForScramblers
-                                  ? selectScramblers(potentialScramblers, scramblersCount)
+                                  ? selectScramblers(potentialScramblers, scramblersCount, eventId, group.number)
                                   : Promise.resolve(_.take(potentialScramblers, scramblersCount));
           return scramblersPromise.then(scramblers => {
             group.peopleScrambling = scramblers;
