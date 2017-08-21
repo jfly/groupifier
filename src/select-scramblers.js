@@ -7,6 +7,7 @@ const dialog = document.getElementsByTagName('dialog')[0];
 const readyButton = dialog.getElementsByTagName('button')[0];
 const eventWithGroupHeader = dialog.getElementsByClassName('event-with-group')[0];
 const list = dialog.getElementsByTagName('ul')[0];
+const selectedScramblersCountSpan = dialog.getElementsByClassName('selected-scramblers-count')[0];
 
 dialogPolyfill.registerDialog(dialog);
 
@@ -18,6 +19,8 @@ readyButton.addEventListener('click', () => {
 export function selectScramblers(people, requiredCount, eventId, groupNumber) {
   const eventObject = _.find(eventObjects, ['id', eventId]);
   const scramblers = [];
+  const updateSelectedCount = () => selectedScramblersCountSpan.innerText = scramblers.length;
+  updateSelectedCount();
   /* Remove current list items. */
   while(list.lastChild) {
     list.removeChild(list.lastChild);
@@ -46,6 +49,7 @@ export function selectScramblers(people, requiredCount, eventId, groupNumber) {
       } else {
         _.pull(scramblers, person);
       }
+      updateSelectedCount();
       readyButton.disabled = !(scramblers.length === requiredCount);
     });
   });
