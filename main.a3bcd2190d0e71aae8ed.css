@@ -11488,3 +11488,12 @@ html, body {
 .actions {
   padding-top: 20px;
 }
+
+.scramblers-dialog {
+  width: 400px;
+}
+
+.scramblers-dialog .scramblers-list {
+  overflow: auto;
+  height: 300px;
+}
