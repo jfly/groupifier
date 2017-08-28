@@ -28,7 +28,7 @@ export function selectScramblers(people, requiredCount, eventId, groupNumber) {
   if(!dialog.open) {
     dialog.showModal();
   }
-  eventWithGroupHeader.innerText = `${eventObject.name} - Round ${groupNumber}`;
+  eventWithGroupHeader.innerText = `${eventObject.name} - Group ${groupNumber}`;
   people.forEach(person => {
     list.insertAdjacentHTML('beforeend', `
       <li class="mdl-list__item">
