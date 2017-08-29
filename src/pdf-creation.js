@@ -26,6 +26,10 @@ export function createPersonalCardsPdf(people) {
       }
     ];
   });
+  /* Force the presence of three cards for each row. */
+  while(personalCards.length % 3) {
+    personalCards.push([]);
+  }
   const documentDefinition = {
     content: _.chunk(personalCards, 3).map(cards => (
       { columns: cards, fontSize: 8, margin: [0, 0, 0, 10] , unbreakable: true }
