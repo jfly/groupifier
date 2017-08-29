@@ -17,7 +17,8 @@ export function createPersonalCardsPdf(people) {
         return [eventObject.name, groupsText('solving'), groupsText('scrambling'), groupsText('judging')];
       });
     return [
-      { text: person.name, bold: true },
+      { text: `${person.name}`, bold: true },
+      { text: person.wcaId ? `WCA ID: ${person.wcaId}` : " " },
       {
         table: {
           body: [['Event', 'Solving', 'Scrambling', 'Judging'], ...table]
