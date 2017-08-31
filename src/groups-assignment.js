@@ -17,10 +17,11 @@ export function assignGroups(allPeople, stationsCount) {
     .map(([eventId, people]) => {
       const groups = [];
       const groupsCount = calculateGroupsCount(eventId, people.length, stationsCount);
-      const groupSize = Math.ceil(people.length / groupsCount);
       _.range(1, groupsCount + 1).forEach(groupNumber => {
+        const assignedPeopleCount = _.flatMap(groups, 'peopleSolving').length;
+        const groupSize = Math.ceil((people.length - assignedPeopleCount) / (groupsCount - groups.length));
         const group = { number: groupNumber };
-        group.peopleSolving = people.slice((groupNumber - 1) * groupSize, groupNumber * groupSize);
+        group.peopleSolving = people.slice(assignedPeopleCount, assignedPeopleCount + groupSize);
         assignTask('solving', group.peopleSolving, eventId, groupNumber);
         groups.push(group);
       });
