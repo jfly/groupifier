@@ -62,7 +62,7 @@ button.addEventListener('click', () => {
 function peopleFromCsvRows(rows) {
   const people = rows.map(row => {
     const name = row['Name'].split(/\s+/).map(word => word.slice(0, 1).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
-    const person = { name, wcaId: row['WCA ID'], events: [], solving: {}, scrambling: {}, judging: {} };
+    const person = { name, wcaId: row['WCA ID'].toUpperCase(), events: [], solving: {}, scrambling: {}, judging: {} };
     eventObjects.forEach(eventObject => {
       if(row[eventObject.id] === '1') {
         person.events.push(eventObject.id);
