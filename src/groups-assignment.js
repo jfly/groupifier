@@ -72,7 +72,10 @@ function calculateGroupsCount(eventId, peopleCount, stationsCount) {
     return 1;
   } else {
     const calculatedGroupSize = Math.ceil(stationsCount * 1.7); /* Suggested number of people in a single group. */
-    const calculatedGroupsCount = Math.round(peopleCount / calculatedGroupSize)
+    /* We calculate the number of perfectly-sized groups, and round it up starting from x.1,
+       this way we don't end up with much more than the perfect amount of people in a single group.
+       Having more small groups is preferred over having fewer big groups. */
+    const calculatedGroupsCount = Math.round(peopleCount / calculatedGroupSize + 0.4);
     return Math.max(calculatedGroupsCount, 2); /* Force at least 2 groups. */
   }
 }
