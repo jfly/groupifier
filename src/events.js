@@ -19,5 +19,5 @@ export const eventObjects = [
   { id: '333mbf', name: '3x3x3 Multi-Blind'  }
 ];
 
-/* These events consist of a single round and doesn't require assigning scramblers and judges. */
+/* These events consist of a single group and doesn't require assigning scramblers and judges. */
 export const selfsufficientEvents = ['333fm', '444bf', '555bf', '333mbf'];
