@@ -1,5 +1,5 @@
 export const eventObjects = [
-  { id: '333',    name: 'Rubik\'s Cube'      },
+  { id: '333',    name: '3x3x3 Cube'         },
   { id: '222',    name: '2x2x2 Cube'         },
   { id: '444',    name: '4x4x4 Cube'         },
   { id: '555',    name: '5x5x5 Cube'         },
@@ -11,7 +11,7 @@ export const eventObjects = [
   { id: '333ft',  name: '3x3x3 With Feet'    },
   { id: 'minx',   name: 'Megaminx'           },
   { id: 'pyram',  name: 'Pyraminx'           },
-  { id: 'clock',  name: 'Rubik\'s Clock'     },
+  { id: 'clock',  name: 'Clock'              },
   { id: 'skewb',  name: 'Skewb'              },
   { id: 'sq1',    name: 'Square-1'           },
   { id: '444bf',  name: '4x4x4 Blindfolded'  },
