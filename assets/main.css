@@ -26,8 +26,12 @@ html, body {
 
 .event-selectfield {
   width: auto;
+  padding: 0;
+}
+.event-selectfield, .event-selectfield * {
+  font-size: inherit;
 }
 
-label[for="simultaneous-events-input"]:not(.is-checked) + div#simultaneous-events-config {
+label[for="simultaneous-events-input"]:not(.is-checked) + #simultaneous-events-table {
   display: none;
 }
