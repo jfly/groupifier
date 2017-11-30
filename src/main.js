@@ -1,5 +1,7 @@
 import 'material-design-lite/material.css';
 import 'material-design-lite/material.js';
+import 'mdl-selectfield/dist/mdl-selectfield.css';
+import 'mdl-selectfield/dist/mdl-selectfield.js';
 import '../assets/main.css';
 
 import { parse as parseCSV } from 'papaparse';
@@ -72,3 +74,16 @@ function peopleFromCsvRows(rows) {
   });
   return _.sortBy(people, 'name');
 }
+
+const eventListElements = eventObjects
+  .map(eventObject => `<option value="${eventObject.id}">${eventObject.name}</option>`)
+  .join('\n');
+document.querySelectorAll('.event-selectfield select').forEach(element => element.innerHTML = eventListElements);
+
+const addSimultaneousEvent = document.getElementById('add-simultaneous-event');
+const mainEvent = document.getElementById('main-event');
+const sideEvent = document.getElementById('side-event');
+
+addSimultaneousEvent.addEventListener('click', () => {
+  console.log(mainEvent.value, sideEvent.value);
+});

@@ -23,3 +23,11 @@ html, body {
   overflow: auto;
   height: 300px;
 }
+
+.event-selectfield {
+  width: auto;
+}
+
+label[for="simultaneous-events-input"]:not(.is-checked) + div#simultaneous-events-config {
+  display: none;
+}
