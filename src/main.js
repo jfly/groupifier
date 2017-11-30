@@ -85,13 +85,13 @@ const mainEvent = document.getElementById('main-event');
 const sideEvent = document.getElementById('side-event');
 const simultaneousEventsFormRow = document.getElementById('simultaneous-events-form');
 
-const selectedText = element => element.options[element.selectedIndex].innerHTML;
+const selectTagText = element => element.options[element.selectedIndex].innerHTML;
 addSimultaneousEvent.addEventListener('click', () => {
   if (mainEvent.value && sideEvent.value) {
     simultaneousEventsFormRow.insertAdjacentHTML('beforebegin', `
       <tr class="simultaneous-events-pair" data-main-event="${mainEvent.value}" data-side-event="${sideEvent.value}">
-        <td class="mdl-data-table__cell--non-numeric">${selectedText(mainEvent)}</td>
-        <td class="mdl-data-table__cell--non-numeric">${selectedText(sideEvent)}</td>
+        <td class="mdl-data-table__cell--non-numeric">${selectTagText(mainEvent)}</td>
+        <td class="mdl-data-table__cell--non-numeric">${selectTagText(sideEvent)}</td>
         <td class="mdl-data-table__cell--non-numeric">
           <button type="button" class="mdl-button mdl-js-button mdl-button--icon" onclick="this.parentNode.parentNode.remove()">
             <i class="material-icons">delete</i>
