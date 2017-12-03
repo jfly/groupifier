@@ -3,13 +3,19 @@ import _ from 'lodash';
 import { eventObjects, selfsufficientEvents } from './events';
 import { selectScramblers } from './select-scramblers';
 
-export function assignGroups(allPeople, stationsCount, sideEventByMainEvent) {
+export function assignGroups(allPeople, stationsCount, sortByResults, sideEventByMainEvent) {
   return _(eventObjects)
     .map('id')
     .map(eventId => [eventId, _.filter(allPeople, { events: [eventId] })])
     .reject(([eventId, people]) => _.isEmpty(people))
     .sortBy(([eventId, people]) => people.length) /* Sort so that events with a smaller amount of people able to help go first. */
     .map(([eventId, people]) => {
+      if (sortByResults) {
+        people = _.orderBy(people, [
+          `wcaData.personal_records.${eventId}.average.world_rank`,
+          `wcaData.personal_records.${eventId}.single.world_rank`
+        ], ['desc', 'desc']);
+      }
       const groups = []
       /* The corresponding side event being held simultaneously. */
       const sideEventId = sideEventByMainEvent[eventId];
@@ -93,10 +99,12 @@ function calculateGroupsCount(eventId, peopleCount, stationsCount, minGroupsCoun
 }
 
 function sortPeopleToHelp(people, skipNewcomers) {
-  return _.sortBy(people, person => {
-    const helpRate = (_.sum(_.map(person.scrambling, _.size)) + _.sum(_.map(person.judging, _.size))) / _.size(person.events);
-    return [skipNewcomers && person.wcaId === "", helpRate];
-  });
+  return _.sortBy(people, [
+     /* If skipNewcomers is false this doesn't have any effect, otherwise people with WCA ID go first. */
+    person => skipNewcomers && person.wcaId === "",
+     /* People with a smaller help rate go first. */
+    person =>  (_.sum(_.map(person.scrambling, _.size)) + _.sum(_.map(person.judging, _.size))) / _.size(person.events)
+  ]);
 }
 
 function assignTask(task, people, eventId, groupId) {

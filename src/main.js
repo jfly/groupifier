@@ -17,6 +17,7 @@ const fileInput = document.getElementById('file-input');
 const stationsInput = document.getElementById('stations-input');
 const scramblersInput = document.getElementById('scramblers-input');
 const staffJudgesInput = document.getElementById('staff-judges-input');
+const sortByResultsInput = document.getElementById('sort-by-results-input');
 const askForScramblersInput = document.getElementById('ask-for-scramblers-input');
 const skipNewcomersInput = document.getElementById('skip-newcomers-input');
 const button = document.getElementById('generate');
@@ -45,6 +46,7 @@ button.addEventListener('click', () => {
   const stationsCount = parseInt(stationsInput.value);
   const scramblersCount = parseInt(scramblersInput.value);
   const staffJudgesCount = parseInt(staffJudgesInput.value);
+  const sortByResults = sortByResultsInput.checked;
   const askForScramblers = askForScramblersInput.checked;
   const skipNewcomers = skipNewcomersInput.checked;
   parseCSV(fileInput.files[0], {
@@ -52,11 +54,13 @@ button.addEventListener('click', () => {
     skipEmptyLines: true,
     complete: ({ data: rows }) => {
       const people = peopleFromCsvRows(rows);
-      const eventsWithData = assignGroups(people, stationsCount, sideEventsByMainEvents());
-      assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers).then(() => {
-        assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers);
-        createPersonalCardsPdf(people).open();
-        createSummaryPdf(eventsWithData).open();
+      attachWcaDataToPeople(people).then(() => {
+        const eventsWithData = assignGroups(people, stationsCount, sortByResults, sideEventsByMainEvents());
+        assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers).then(() => {
+          assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers);
+          createPersonalCardsPdf(people).open();
+          createSummaryPdf(eventsWithData).open();
+        });
       });
     }
   });
@@ -70,4 +74,21 @@ function peopleFromCsvRows(rows) {
     return person;
   });
   return _.sortBy(people, 'name');
+}
+
+function attachWcaDataToPeople(people) {
+  return fetchPeopleData(people).then(peopleData => {
+    peopleData.forEach(personData => {
+      _.find(people, { wcaId: personData.person.wca_id }).wcaData = personData;
+    });
+  });
+}
+
+function fetchPeopleData(people) {
+  const apiUrl = 'https://www.worldcubeassociation.org/api/v0/persons?per_page=100&wca_ids=';
+  const allWcaIds = _.compact(_.map(people, 'wcaId'));
+  const promises = _.map(_.chunk(allWcaIds, 100), wcaIds =>
+    fetch(apiUrl + wcaIds.join(',')).then(response => response.json())
+  );
+  return Promise.all(promises).then(_.flatten);
 }
