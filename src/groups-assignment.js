@@ -4,15 +4,10 @@ import { eventObjects, selfsufficientEvents } from './events';
 import { selectScramblers } from './select-scramblers';
 
 export function assignGroups(allPeople, stationsCount, sideEventByMainEvent) {
-  const peopleByEvent = {};
-  allPeople.forEach(person => {
-    person.events.forEach(eventId => {
-      peopleByEvent[eventId] = peopleByEvent[eventId] || [];
-      peopleByEvent[eventId].push(person);
-    });
-  });
-  return _(peopleByEvent)
-    .toPairs()
+  return _(eventObjects)
+    .map('id')
+    .map(eventId => [eventId, _.filter(allPeople, { events: [eventId] })])
+    .reject(([eventId, people]) => _.isEmpty(people))
     .sortBy(([eventId, people]) => people.length) /* Sort so that events with a smaller amount of people able to help go first. */
     .map(([eventId, people]) => {
       const groups = []
@@ -106,7 +101,6 @@ function sortPeopleToHelp(people, skipNewcomers) {
 
 function assignTask(task, people, eventId, groupId) {
   people.forEach(person => {
-    person[task][eventId] = person[task][eventId] || [];
-    person[task][eventId].push(groupId);
+    _.update(person, [task, eventId], groupIds => _.concat(groupIds || [], groupId));
   });
 }
