@@ -52,11 +52,11 @@ button.addEventListener('click', () => {
     skipEmptyLines: true,
     complete: ({ data: rows }) => {
       const people = peopleFromCsvRows(rows);
-      const eventsWithGroups = assignGroups(people, stationsCount, sideEventsByMainEvents());
-      assignScrambling(eventsWithGroups, scramblersCount, askForScramblers, skipNewcomers).then(() => {
-        assignJudging(people, eventsWithGroups, stationsCount, staffJudgesCount, skipNewcomers);
+      const eventsWithData = assignGroups(people, stationsCount, sideEventsByMainEvents());
+      assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers).then(() => {
+        assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers);
         createPersonalCardsPdf(people).open();
-        createSummaryPdf(eventsWithGroups).open();
+        createSummaryPdf(eventsWithData).open();
       });
     }
   });

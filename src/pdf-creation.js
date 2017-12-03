@@ -40,8 +40,8 @@ export function createPersonalCardsPdf(people) {
   return pdfMake.createPdf(documentDefinition);
 }
 
-export function createSummaryPdf(eventsWithGroups) {
-  const groupsByEvent = _.fromPairs(eventsWithGroups);
+export function createSummaryPdf(eventsWithData) {
+  const groupsByEvent = _.mapValues(_.fromPairs(eventsWithData), 'groups');
   const documentDefinition = {
     content: eventObjects
       .filter(eventObject => groupsByEvent[eventObject.id])

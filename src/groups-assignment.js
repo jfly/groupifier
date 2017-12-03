@@ -18,18 +18,18 @@ export function assignGroups(allPeople, stationsCount, sideEventByMainEvent) {
       const groups = []
       /* The corresponding side event being held simultaneously. */
       const sideEventId = sideEventByMainEvent[eventId];
+      let peopleSolvingSideEvent = [];
       if (sideEventId) {
-        const peopleSolvingSideEvent = people.filter(person => person.events.includes(sideEventId));
+        peopleSolvingSideEvent = people.filter(person => person.events.includes(sideEventId));
         const sideEvent = _.find(eventObjects, { id: sideEventId });
         /* Put people solving simultaneous events in separate groups. */
         groups.push(...assignGroupsForEvent(eventId, peopleSolvingSideEvent, stationsCount, 1, n => `${sideEvent.shortName}${n > 1 ? '-' + n : '' }`));
-        people = _.difference(people, peopleSolvingSideEvent);
       }
       /* Force at least 2 groups unless this is a selfsufficient event. */
       const minGroupsCount = (groups.length > 0 || selfsufficientEvents.includes(eventId)) ? 1 : 2;
-      groups.push(...assignGroupsForEvent(eventId, people, stationsCount, minGroupsCount, _.identity));
+      groups.push(...assignGroupsForEvent(eventId, _.difference(people, peopleSolvingSideEvent), stationsCount, minGroupsCount, _.identity));
 
-      return [eventId, groups];
+      return [eventId, { groups, people, peopleSolvingSideEvent }];
     })
     .value();
 }
@@ -48,14 +48,13 @@ function assignGroupsForEvent(eventId, people, stationsCount, minGroupsCount, nu
   return groups;
 }
 
-export function assignScrambling(eventsWithGroups, scramblersCount, askForScramblers, skipNewcomers) {
-  return _(eventsWithGroups)
-    .reject(([eventId, groups]) => selfsufficientEvents.includes(eventId))
-    .flatMap(([eventId, groups]) => {
-      const people = _.flatMap(groups, 'peopleSolving');
+export function assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers) {
+  return _(eventsWithData)
+    .reject(([eventId, data]) => selfsufficientEvents.includes(eventId))
+    .flatMap(([eventId, { groups, people, peopleSolvingSideEvent }]) => {
       return groups.map(group => {
         return () => {
-          const potentialScramblers = sortPeopleToHelp(_.difference(people, group.peopleSolving), skipNewcomers);
+          const potentialScramblers = sortPeopleToHelp(_.difference(people, group.peopleSolving, peopleSolvingSideEvent), skipNewcomers);
           const scramblersPromise = askForScramblers
                                   ? selectScramblers(potentialScramblers, scramblersCount, eventId, group.id)
                                   : Promise.resolve(_.take(potentialScramblers, scramblersCount));
@@ -69,15 +68,15 @@ export function assignScrambling(eventsWithGroups, scramblersCount, askForScramb
     .reduce((promise, fn) => promise.then(fn), Promise.resolve());
 }
 
-export function assignJudging(allPeople, eventsWithGroups, stationsCount, staffJudgesCount, skipNewcomers) {
-  _(eventsWithGroups)
-    .reject(([eventId, groups]) => selfsufficientEvents.includes(eventId))
-    .each(([eventId, groups]) => {
+export function assignJudging(allPeople, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers) {
+  _(eventsWithData)
+    .reject(([eventId, data]) => selfsufficientEvents.includes(eventId))
+    .each(([eventId, { groups, people, peopleSolvingSideEvent }]) => {
       groups.forEach(group => {
         const judgesCount = Math.min(stationsCount, group.peopleSolving.length);
         const additionalJudgesCount = judgesCount - staffJudgesCount;
         if(additionalJudgesCount > 0) {
-          const potentialJudges = sortPeopleToHelp(_.difference(allPeople, group.peopleSolving, group.peopleScrambling), skipNewcomers);
+          const potentialJudges = sortPeopleToHelp(_.difference(allPeople, group.peopleSolving, group.peopleScrambling, peopleSolvingSideEvent), skipNewcomers);
           group.peopleJudging = _.take(potentialJudges, judgesCount);
           assignTask('judging', group.peopleJudging, eventId, group.id);
         }
