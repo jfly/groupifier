@@ -52,7 +52,7 @@ button.addEventListener('click', () => {
     skipEmptyLines: true,
     complete: ({ data: rows }) => {
       const people = peopleFromCsvRows(rows);
-      const eventsWithGroups = assignGroups(people, stationsCount);
+      const eventsWithGroups = assignGroups(people, stationsCount, sideEventsByMainEvents());
       assignScrambling(eventsWithGroups, scramblersCount, askForScramblers, skipNewcomers).then(() => {
         assignJudging(people, eventsWithGroups, stationsCount, staffJudgesCount, skipNewcomers);
         createPersonalCardsPdf(people).open();

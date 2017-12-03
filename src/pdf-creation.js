@@ -52,7 +52,7 @@ export function createSummaryPdf(eventsWithGroups) {
               unbreakable: true,
               margin: [0, 0, 0, 10],
               stack: [
-                { text: `${eventObject.name} - Group ${group.number}`, bold: true, fontSize: 14, margin: [0, 0, 0, 5] },
+                { text: `${eventObject.name} - Group ${group.id}`, bold: true, fontSize: 14, margin: [0, 0, 0, 5] },
                 {
                   fontSize: 8,
                   columns: ['Solving', 'Scrambling', 'Judging'].map(type => {

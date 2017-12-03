@@ -16,7 +16,7 @@ readyButton.addEventListener('click', () => {
   readyButton.disabled = true;
 });
 
-export function selectScramblers(people, requiredCount, eventId, groupNumber) {
+export function selectScramblers(people, requiredCount, eventId, groupId) {
   const eventObject = _.find(eventObjects, ['id', eventId]);
   const scramblers = [];
   const updateSelectedCount = () => selectedScramblersCountSpan.innerText = scramblers.length;
@@ -28,7 +28,7 @@ export function selectScramblers(people, requiredCount, eventId, groupNumber) {
   if(!dialog.open) {
     dialog.showModal();
   }
-  eventWithGroupHeader.innerText = `${eventObject.name} - Group ${groupNumber}`;
+  eventWithGroupHeader.innerText = `${eventObject.name} - Group ${groupId}`;
   people.forEach(person => {
     list.insertAdjacentHTML('beforeend', `
       <li class="mdl-list__item">

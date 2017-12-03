@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { eventObjects, selfsufficientEvents } from './events';
 import { selectScramblers } from './select-scramblers';
 
-export function assignGroups(allPeople, stationsCount) {
+export function assignGroups(allPeople, stationsCount, sideEventByMainEvent) {
   const peopleByEvent = {};
   allPeople.forEach(person => {
     person.events.forEach(eventId => {
@@ -15,19 +15,37 @@ export function assignGroups(allPeople, stationsCount) {
     .toPairs()
     .sortBy(([eventId, people]) => people.length) /* Sort so that events with a smaller amount of people able to help go first. */
     .map(([eventId, people]) => {
-      const groups = [];
-      const groupsCount = calculateGroupsCount(eventId, people.length, stationsCount);
-      _.range(1, groupsCount + 1).forEach(groupNumber => {
-        const assignedPeopleCount = _.flatMap(groups, 'peopleSolving').length;
-        const groupSize = Math.ceil((people.length - assignedPeopleCount) / (groupsCount - groups.length));
-        const group = { number: groupNumber };
-        group.peopleSolving = people.slice(assignedPeopleCount, assignedPeopleCount + groupSize);
-        assignTask('solving', group.peopleSolving, eventId, groupNumber);
-        groups.push(group);
-      });
+      const groups = []
+      /* The corresponding side event being held simultaneously. */
+      const sideEventId = sideEventByMainEvent[eventId];
+      if (sideEventId) {
+        const peopleSolvingSideEvent = people.filter(person => person.events.includes(sideEventId));
+        const sideEvent = _.find(eventObjects, { id: sideEventId });
+        /* Put people solving simultaneous events in separate groups. */
+        groups.push(...assignGroupsForEvent(eventId, peopleSolvingSideEvent, stationsCount, 1, n => `${sideEvent.shortName}${n > 1 ? '-' + n : '' }`));
+        people = _.difference(people, peopleSolvingSideEvent);
+      }
+      /* Force at least 2 groups unless this is a selfsufficient event. */
+      const minGroupsCount = (groups.length > 0 || selfsufficientEvents.includes(eventId)) ? 1 : 2;
+      groups.push(...assignGroupsForEvent(eventId, people, stationsCount, minGroupsCount, _.identity));
+
       return [eventId, groups];
     })
     .value();
+}
+
+function assignGroupsForEvent(eventId, people, stationsCount, minGroupsCount, numberToId) {
+  const groups = [];
+  const groupsCount = calculateGroupsCount(eventId, people.length, stationsCount, minGroupsCount);
+  _.range(1, groupsCount + 1).forEach(groupNumber => {
+    const group = { id: numberToId(groupNumber) };
+    const assignedPeopleCount = _.flatMap(groups, 'peopleSolving').length;
+    const groupSize = Math.ceil((people.length - assignedPeopleCount) / (groupsCount - groups.length));
+    group.peopleSolving = people.slice(assignedPeopleCount, assignedPeopleCount + groupSize);
+    assignTask('solving', group.peopleSolving, eventId, group.id);
+    groups.push(group);
+  });
+  return groups;
 }
 
 export function assignScrambling(eventsWithGroups, scramblersCount, askForScramblers, skipNewcomers) {
@@ -39,11 +57,11 @@ export function assignScrambling(eventsWithGroups, scramblersCount, askForScramb
         return () => {
           const potentialScramblers = sortPeopleToHelp(_.difference(people, group.peopleSolving), skipNewcomers);
           const scramblersPromise = askForScramblers
-                                  ? selectScramblers(potentialScramblers, scramblersCount, eventId, group.number)
+                                  ? selectScramblers(potentialScramblers, scramblersCount, eventId, group.id)
                                   : Promise.resolve(_.take(potentialScramblers, scramblersCount));
           return scramblersPromise.then(scramblers => {
             group.peopleScrambling = scramblers;
-            assignTask('scrambling', scramblers, eventId, group.number);
+            assignTask('scrambling', scramblers, eventId, group.id);
           });
         };
       });
@@ -61,13 +79,13 @@ export function assignJudging(allPeople, eventsWithGroups, stationsCount, staffJ
         if(additionalJudgesCount > 0) {
           const potentialJudges = sortPeopleToHelp(_.difference(allPeople, group.peopleSolving, group.peopleScrambling), skipNewcomers);
           group.peopleJudging = _.take(potentialJudges, judgesCount);
-          assignTask('judging', group.peopleJudging, eventId, group.number);
+          assignTask('judging', group.peopleJudging, eventId, group.id);
         }
       });
     });
 }
 
-function calculateGroupsCount(eventId, peopleCount, stationsCount) {
+function calculateGroupsCount(eventId, peopleCount, stationsCount, minGroupsCount) {
   if(selfsufficientEvents.includes(eventId)) {
     return 1;
   } else {
@@ -76,7 +94,7 @@ function calculateGroupsCount(eventId, peopleCount, stationsCount) {
        this way we don't end up with much more than the perfect amount of people in a single group.
        Having more small groups is preferred over having fewer big groups. */
     const calculatedGroupsCount = Math.round(peopleCount / calculatedGroupSize + 0.4);
-    return Math.max(calculatedGroupsCount, 2); /* Force at least 2 groups. */
+    return Math.max(calculatedGroupsCount, minGroupsCount);
   }
 }
 
@@ -87,9 +105,9 @@ function sortPeopleToHelp(people, skipNewcomers) {
   });
 }
 
-function assignTask(task, people, eventId, groupNumber) {
+function assignTask(task, people, eventId, groupId) {
   people.forEach(person => {
     person[task][eventId] = person[task][eventId] || [];
-    person[task][eventId].push(groupNumber);
+    person[task][eventId].push(groupId);
   });
 }
