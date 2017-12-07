@@ -9,7 +9,7 @@ import _ from 'lodash';
 
 import { peopleFromCsvRows, attachWcaDataToPeople } from './people';
 import { assignGroups, assignScrambling, assignJudging } from './groups-assignment';
-import { createPersonalCardsPdf, createSummaryPdf } from './pdf-creation';
+import { createPersonalCardsPdf, createSummaryPdf, createScorecardsPdf } from './pdf-creation';
 import { sideEventsByMainEvents } from './simultaneous-events';
 
 const fileNameInput = document.getElementById('file-name-input');
@@ -60,6 +60,7 @@ button.addEventListener('click', () => {
           assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers);
           createPersonalCardsPdf(people).open();
           createSummaryPdf(eventsWithData).open();
+          createScorecardsPdf(eventsWithData).open();
         });
       });
     }
