@@ -73,7 +73,7 @@ export function createSummaryPdf(eventsWithData) {
   return pdfMake.createPdf(documentDefinition);
 }
 
-export function createScorecardsPdf(eventsWithData) {
+export function createScorecardsPdf(eventsWithData, competitionName) {
   const groupsByEvent = _.mapValues(_.fromPairs(eventsWithData), 'groups');
   const events = eventObjects.filter(eventObject => groupsByEvent[eventObject.id]);
   let scorecardNumber = 0;
@@ -85,7 +85,7 @@ export function createScorecardsPdf(eventsWithData) {
         _.map(group.peopleSolving, person =>
           [
             { text: scorecardNumber += 1, fontSize: 10 },
-            { text: '<Competition Name 2017>', bold: true, fontSize: 16, margin: [0, 0, 0, 10], alignment: 'center' },
+            { text: competitionName, bold: true, fontSize: 16, margin: [0, 0, 0, 10], alignment: 'center' },
             {
               margin: [25, 0, 0, 0],
               table: {

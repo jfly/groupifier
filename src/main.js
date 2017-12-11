@@ -14,6 +14,7 @@ import { sideEventsByMainEvents } from './simultaneous-events';
 
 const fileNameInput = document.getElementById('file-name-input');
 const fileInput = document.getElementById('file-input');
+const competitionNameInput = document.getElementById('competition-name-input');
 const stationsInput = document.getElementById('stations-input');
 const scramblersInput = document.getElementById('scramblers-input');
 const staffJudgesInput = document.getElementById('staff-judges-input');
@@ -43,6 +44,7 @@ function updateButtonState() {
 }
 
 button.addEventListener('click', () => {
+  const competitionName = competitionNameInput.value;
   const stationsCount = parseInt(stationsInput.value);
   const scramblersCount = parseInt(scramblersInput.value);
   const staffJudgesCount = parseInt(staffJudgesInput.value);
@@ -60,7 +62,7 @@ button.addEventListener('click', () => {
           assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers);
           createPersonalCardsPdf(people).open();
           createSummaryPdf(eventsWithData).open();
-          createScorecardsPdf(eventsWithData).open();
+          createScorecardsPdf(eventsWithData, competitionName).open();
         });
       });
     }

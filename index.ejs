@@ -28,6 +28,11 @@
             <input class="hidden-file-input" type="file" id="file-input" accept=".csv">
           </div>
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="competition-name-input" pattern=".+">
+            <label class="mdl-textfield__label" for="compettion-name-input">Competition name</label>
+            <span class="mdl-textfield__error">must be present</span>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" type="text" id="stations-input" pattern="\d*">
             <label class="mdl-textfield__label" for="stations-input">Stations count</label>
             <span class="mdl-textfield__error">must be a natural number</span>
