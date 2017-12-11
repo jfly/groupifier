@@ -75,93 +75,102 @@ export function createSummaryPdf(eventsWithData) {
 
 export function createScorecardsPdf(eventsWithData, competitionName) {
   const groupsByEvent = _.mapValues(_.fromPairs(eventsWithData), 'groups');
-  const events = eventObjects.filter(eventObject => groupsByEvent[eventObject.id]);
-  let scorecardNumber = 0;
+  const events = eventObjects.filter(eventObject => groupsByEvent[eventObject.id] && eventObject.id !== '333fm');
   const scorecardMargin = 20;
   const pageWidth = 595;
   const pageHeight = 842;
-  const scorecards = _.flatMap(events, eventObject =>
-      _.flatMap(groupsByEvent[eventObject.id], group =>
-        _.map(group.peopleSolving, person =>
-          [
-            { text: scorecardNumber += 1, fontSize: 10 },
-            { text: competitionName, bold: true, fontSize: 16, margin: [0, 0, 0, 10], alignment: 'center' },
-            {
-              margin: [25, 0, 0, 0],
-              table: {
-                widths: ['*', 'auto', 'auto'],
-                body: [
-                  [
-                    { border: [false, false, false, false], fontSize: 10, text: 'Event' },
-                    { border: [false, false, false, false], fontSize: 10, text: 'Round' },
-                    { border: [false, false, false, false], fontSize: 10, text: 'Group' }
-                  ],
-                  [eventObject.name, { text: '1', alignment: 'center' }, { text: group.id, alignment: 'center' }]
-                ]
-              }
-            },
-            {
-              margin: [25, 0, 0, 0],
-              table: {
-                widths: ['auto', '*'],
-                body: [
-                  [
-                    { border: [false, false, false, false], fontSize: 10, text: 'ID' },
-                    { border: [false, false, false, false], fontSize: 10, text: 'Name' }
-                  ],
-                  [{ text: person.id, alignment: 'center' }, person.name]
-                ]
-              }
-            },
-            {
-              margin: [0, 10, 0, 0],
-              table: {
-                widths: [16, '*', 30, 30], /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */
-                body: [
-                  [
-                    { border: [false, false, false, false], fontSize: 10, text: '' },
-                    { border: [false, false, false, false], fontSize: 10, alignment: 'center', text: 'Result' },
-                    { border: [false, false, false, false], fontSize: 10, alignment: 'center', text: 'Judge' },
-                    { border: [false, false, false, false], fontSize: 10, alignment: 'center', text: 'Comp' }
-                  ],
-                  [{ border: [false, false, false, false],fontSize: 20, alignment: 'center', bold: true, text: '1' }, {}, {} ,{}],
-                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }],
-                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '2' }, {}, {}, {}],
-                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], columns: [
-                    {
-                      canvas: [
-                        {
-                          type: 'line',
-                          x1: 0, y1: 0,
-                          x2: (pageWidth - 4 * scorecardMargin) / 2, y2: 0,
-                          lineWidth: 1,
-                          dash: { length: 5 },
-                        },
-                      ]
-                    }
-                  ]}],
-                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '3' }, {}, {}, {}],
-                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }],
-                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '4' }, {}, {}, {}],
-                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }],
-                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '5' }, {}, {}, {}],
-                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: 'Extra attempt', fontSize: 10 }],
-                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '_' }, {}, {}, {}],
-                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }]
-                ]
-              }
-            },
-            {
-              fontSize: 10,
-              columns: [
-                { text: 'Cutoff: <Cutoff>', alignment: 'center' },
-                { text: 'DNF Limit: <Time Limit>', alignment: 'center' }
+  const scorecards = _.flatMap(events, eventObject => {
+    let scorecardNumber = 0;
+    return _.flatMap(groupsByEvent[eventObject.id], group => {
+      const groupScorecards = _.map(group.peopleSolving, person =>
+        [
+          { text: scorecardNumber += 1, fontSize: 10 },
+          { text: competitionName, bold: true, fontSize: 16, margin: [0, 0, 0, 10], alignment: 'center' },
+          {
+            margin: [25, 0, 0, 0],
+            table: {
+              widths: ['*', 'auto', 'auto'],
+              body: [
+                [
+                  { border: [false, false, false, false], fontSize: 10, text: 'Event' },
+                  { border: [false, false, false, false], fontSize: 10, text: 'Round' },
+                  { border: [false, false, false, false], fontSize: 10, text: 'Group' }
+                ],
+                [eventObject.name, { text: '1', alignment: 'center' }, { text: group.id, alignment: 'center' }]
               ]
-            },
-          ]
-        )
-      )
-    );
+            }
+          },
+          {
+            margin: [25, 0, 0, 0],
+            table: {
+              widths: ['auto', '*'],
+              body: [
+                [
+                  { border: [false, false, false, false], fontSize: 10, text: 'ID' },
+                  { border: [false, false, false, false], fontSize: 10, text: 'Name' }
+                ],
+                [{ text: person.id, alignment: 'center' }, person.name]
+              ]
+            }
+          },
+          {
+            margin: [0, 10, 0, 0],
+            table: {
+              widths: [16, '*', 30, 30], /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */
+              body: [
+                [
+                  { border: [false, false, false, false], fontSize: 10, text: '' },
+                  { border: [false, false, false, false], fontSize: 10, alignment: 'center', text: 'Result' },
+                  { border: [false, false, false, false], fontSize: 10, alignment: 'center', text: 'Judge' },
+                  { border: [false, false, false, false], fontSize: 10, alignment: 'center', text: 'Comp' }
+                ],
+                ..._.range(1, eventObject.maxAttemptsCount + 1)
+                  .map(attemptNumber => [
+                    [{ border: [false, false, false, false], fontSize: 20, alignment: 'center', bold: true, text: attemptNumber }, {}, {} ,{}]
+                  ])
+                  .reduce((rows1, rows2) =>
+                    rows1.concat([[{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }]], rows2)
+                  ),
+                // [{ border: [false, false, false, false], fontSize: 20, alignment: 'center', bold: true, text: '1' }, {}, {} ,{}],
+                // [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }],
+                // [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '2' }, {}, {}, {}],
+                // [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], columns: [
+                //   {
+                //     canvas: [
+                //       {
+                //         type: 'line',
+                //         x1: 0, y1: 0,
+                //         x2: (pageWidth - 4 * scorecardMargin) / 2, y2: 0,
+                //         lineWidth: 1,
+                //         dash: { length: 5 },
+                //       },
+                //     ]
+                //   }
+                // ]}],
+                // [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '3' }, {}, {}, {}],
+                // [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }],
+                // [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '4' }, {}, {}, {}],
+                // [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }],
+                // [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '5' }, {}, {}, {}],
+                [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: 'Extra attempt', fontSize: 10 }],
+                [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '_' }, {}, {}, {}],
+                [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }]
+              ]
+            }
+          },
+          // {
+          //   fontSize: 10,
+          //   columns: [
+          //     { text: 'Cutoff: <Cutoff>', alignment: 'center' },
+          //     { text: 'DNF Limit: <Time Limit>', alignment: 'center' }
+          //   ]
+          // },
+        ]
+      );
+      const scorecardsOnLastPage = groupScorecards.length % 4;
+      return scorecardsOnLastPage === 0 ? groupScorecards : groupScorecards.concat(_.times(4 - scorecardsOnLastPage, _.constant({})));
+    });
+  });
   const documentDefinition = {
     pageMargins: scorecardMargin,
     background: [
