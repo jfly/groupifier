@@ -78,16 +78,14 @@ export function createScorecardsPdf(eventsWithData) {
   const events = eventObjects.filter(eventObject => groupsByEvent[eventObject.id]);
   let scorecardNumber = 0;
   const scorecardMargin = 20;
+  const pageWidth = 595;
+  const pageHeight = 842;
   const scorecards = _.flatMap(events, eventObject =>
       _.flatMap(groupsByEvent[eventObject.id], group =>
         _.map(group.peopleSolving, person =>
           [
-            {
-              columns: [
-                { width: 25, text: scorecardNumber += 1, fontSize: 10 },
-                { width: '*', text: '<Competition Name 2017>', bold: true, fontSize: 16, margin: [0, 0, 0, 10], alignment: 'center' },
-              ]
-            },
+            { text: scorecardNumber += 1, fontSize: 10 },
+            { text: '<Competition Name 2017>', bold: true, fontSize: 16, margin: [0, 0, 0, 10], alignment: 'center' },
             {
               margin: [25, 0, 0, 0],
               table: {
@@ -126,35 +124,36 @@ export function createScorecardsPdf(eventsWithData) {
                     { border: [false, false, false, false], fontSize: 10, alignment: 'center', text: 'Judge' },
                     { border: [false, false, false, false], fontSize: 10, alignment: 'center', text: 'Comp' }
                   ],
-                  [{ border: [false, false, false, false],fontSize: 20, alignment: 'center', bold: true, text: '1'}, {}, {} ,{}],
+                  [{ border: [false, false, false, false],fontSize: 20, alignment: 'center', bold: true, text: '1' }, {}, {} ,{}],
                   [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }],
-                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '2'}, {}, {}, {}],
+                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '2' }, {}, {}, {}],
                   [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], columns: [
                     {
                       canvas: [
                         {
                           type: 'line',
                           x1: 0, y1: 0,
-                          x2: (595 - 4 * 20) / 2, y2: 0,
+                          x2: (pageWidth - 4 * scorecardMargin) / 2, y2: 0,
                           lineWidth: 1,
                           dash: { length: 5 },
                         },
                       ]
                     }
                   ]}],
-                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '3'}, {}, {}, {}],
-                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: ''}],
-                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '4'}, {}, {}, {}],
-                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: ''}],
-                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '5'}, {}, {}, {}],
-                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 10], text: ''}],
-                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '_'}, {}, {}, {}],
-                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: ''}]
+                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '3' }, {}, {}, {}],
+                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }],
+                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '4' }, {}, {}, {}],
+                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }],
+                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '5' }, {}, {}, {}],
+                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: 'Extra attempt', fontSize: 10 }],
+                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '_' }, {}, {}, {}],
+                  [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }]
                 ]
               }
             },
-            { fontSize: 10, columns:
-              [
+            {
+              fontSize: 10,
+              columns: [
                 { text: 'Cutoff: <Cutoff>', alignment: 'center' },
                 { text: 'DNF Limit: <Time Limit>', alignment: 'center' }
               ]
@@ -170,16 +169,16 @@ export function createScorecardsPdf(eventsWithData) {
         canvas: [
           {
             type: 'line',
-            x1: 0 + 20, y1:  842 / 2,
-            x2: 595 - 20, y2:  842 / 2,
+            x1: scorecardMargin, y1: pageHeight / 2,
+            x2: pageWidth - scorecardMargin, y2: pageHeight / 2,
             lineWidth: 0.1,
             dash: { length: 10 },
             lineColor: '#888888'
           },
           {
             type: 'line',
-            x1: 595 / 2, y1:  0 + 20,
-            x2: 595 / 2, y2:  842 - 20,
+            x1: pageWidth / 2, y1: scorecardMargin,
+            x2: pageWidth / 2, y2:  pageHeight - scorecardMargin,
             lineWidth: 0.1,
             dash: { length: 10 },
             lineColor: '#888888'
@@ -199,8 +198,8 @@ export function createScorecardsPdf(eventsWithData) {
       },
       table: {
         widths: ['*', '*'],
-        /* A4 page height in pixels minus vertical margins and three vertical borders of the root table, divided into a half. */
-        heights: Math.floor((842 - 80 - 3) / 2),
+        /* A4 page height in pixels minus vertical margins and three invisible, vertical borders of the root table, divided into a half. */
+        heights: Math.floor((pageHeight - 4 * scorecardMargin - 3) / 2),
         dontBreakRows: true,
         body: _.chunk(scorecards, 2)
       }
