@@ -77,27 +77,33 @@ export function createScorecardsPdf(eventsWithData) {
   const groupsByEvent = _.mapValues(_.fromPairs(eventsWithData), 'groups');
   const events = eventObjects.filter(eventObject => groupsByEvent[eventObject.id]);
   let scorecardNumber = 0;
+  const scorecardMargin = 20;
   const scorecards = _.flatMap(events, eventObject =>
       _.flatMap(groupsByEvent[eventObject.id], group =>
         _.map(group.peopleSolving, person =>
           [
-            { text: scorecardNumber += 1, fontSize: 10, margin: [2, 2, 0, 0] },
-            { text: '<Competition Name 2017>', bold: true, fontSize: 16, margin: [0, 10, 0, 10], alignment: 'center' },
             {
-              margin: [25, 0],
+              columns: [
+                { width: 25, text: scorecardNumber += 1, fontSize: 10 },
+                { width: '*', text: '<Competition Name 2017>', bold: true, fontSize: 16, margin: [0, 0, 0, 10], alignment: 'center' },
+              ]
+            },
+            {
+              margin: [25, 0, 0, 0],
               table: {
-                widths: ['*', 'auto'],
+                widths: ['*', 'auto', 'auto'],
                 body: [
                   [
                     { border: [false, false, false, false], fontSize: 10, text: 'Event' },
-                    { border: [false, false, false, false], fontSize: 10, text: 'Round' }
+                    { border: [false, false, false, false], fontSize: 10, text: 'Round' },
+                    { border: [false, false, false, false], fontSize: 10, text: 'Group' }
                   ],
-                  [eventObject.name, '1']
+                  [eventObject.name, { text: '1', alignment: 'center' }, { text: group.id, alignment: 'center' }]
                 ]
               }
             },
             {
-              margin: [25, 0],
+              margin: [25, 0, 0, 0],
               table: {
                 widths: ['auto', '*'],
                 body: [
@@ -105,12 +111,12 @@ export function createScorecardsPdf(eventsWithData) {
                     { border: [false, false, false, false], fontSize: 10, text: 'ID' },
                     { border: [false, false, false, false], fontSize: 10, text: 'Name' }
                   ],
-                  [person.id, person.name]
+                  [{ text: person.id, alignment: 'center' }, person.name]
                 ]
               }
             },
             {
-              margin: [0, 10, 25, 0],
+              margin: [0, 10, 0, 0],
               table: {
                 widths: [16, '*', 30, 30], /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */
                 body: [
@@ -129,7 +135,7 @@ export function createScorecardsPdf(eventsWithData) {
                         {
                           type: 'line',
                           x1: 0, y1: 0,
-                          x2: 290, y2: 0, /* Just fits well. */
+                          x2: (595 - 4 * 20) / 2, y2: 0,
                           lineWidth: 1,
                           dash: { length: 5 },
                         },
@@ -142,7 +148,7 @@ export function createScorecardsPdf(eventsWithData) {
                   [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: ''}],
                   [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '5'}, {}, {}, {}],
                   [{ border: [false, false, false, false], colSpan: 4, margin: [0, 10], text: ''}],
-                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '6'}, {}, {}, {}],
+                  [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '_'}, {}, {}, {}],
                   [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: ''}]
                 ]
               }
@@ -158,19 +164,43 @@ export function createScorecardsPdf(eventsWithData) {
       )
     );
   const documentDefinition = {
-    pageMargins: [0, 0],
+    pageMargins: scorecardMargin,
+    background: [
+      {
+        canvas: [
+          {
+            type: 'line',
+            x1: 0 + 20, y1:  842 / 2,
+            x2: 595 - 20, y2:  842 / 2,
+            lineWidth: 0.1,
+            dash: { length: 10 },
+            lineColor: '#888888'
+          },
+          {
+            type: 'line',
+            x1: 595 / 2, y1:  0 + 20,
+            x2: 595 / 2, y2:  842 - 20,
+            lineWidth: 0.1,
+            dash: { length: 10 },
+            lineColor: '#888888'
+          },
+        ]
+      },
+    ],
     content: {
       layout: {
         vLineColor: '#999999',
         hLineColor: '#999999',
-        paddingLeft: () => 0,
-        paddingRight: () => 0,
-        paddingTop: () => 0,
-        paddingBottom: () => 0
+        paddingLeft: i => (i % 2 === 0 ? 0 : scorecardMargin),
+        paddingRight: i => (i % 2 === 0 ? scorecardMargin : 0),
+        paddingTop: i => (i % 2 === 0 ? 0 : scorecardMargin),
+        paddingBottom: i => (i % 2 === 0 ? scorecardMargin : 0),
+        defaultBorder: false
       },
       table: {
         widths: ['*', '*'],
-        heights: Math.floor((842 - 3) / 2), /* A4 page height in pixels minus three vertical borders of the root table, divided into a half. */
+        /* A4 page height in pixels minus vertical margins and three vertical borders of the root table, divided into a half. */
+        heights: Math.floor((842 - 80 - 3) / 2),
         dontBreakRows: true,
         body: _.chunk(scorecards, 2)
       }
