@@ -102,8 +102,8 @@ function sortPeopleToHelp(people, skipNewcomers) {
   return _.sortBy(people, [
      /* If skipNewcomers is false this doesn't have any effect, otherwise people with WCA ID go first. */
     person => skipNewcomers && person.wcaId === "",
-     /* People with a smaller help rate go first. */
-    person =>  (_.sum(_.map(person.scrambling, _.size)) + _.sum(_.map(person.judging, _.size))) / _.size(person.events)
+     /* People helping in fewer events go first. */
+    person =>  _.sum(_.map(person.scrambling, _.size)) + _.sum(_.map(person.judging, _.size))
   ]);
 }
 
