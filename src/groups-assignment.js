@@ -53,9 +53,19 @@ export function assignScrambling(eventsWithData, scramblersCount, askForScramble
   return _(eventsWithData)
     .reject(([eventId, data]) => selfsufficientEvents.includes(eventId))
     .flatMap(([eventId, { groups, people, peopleSolvingSideEvent }]) => {
-      return groups.map(group => {
+      return groups.map((group, groupIndex) => {
         return () => {
-          const potentialScramblers = sortPeopleToHelp(_.difference(people, group.peopleSolving, peopleSolvingSideEvent), skipNewcomers);
+          const potentialScramblers = _.sortBy(_.difference(people, group.peopleSolving, peopleSolvingSideEvent), [
+            /* If skipNewcomers is false this doesn't have any effect, otherwise people with WCA ID go first. */
+            person => skipNewcomers && person.wcaId === "",
+            /* If possible, we avoid assigning a task to person solving in the next group. */
+            person => _.get(groups, [groupIndex + 1, 'peopleSolving'], []).includes(person),
+            /* We avoid assigning scrambling in more than one group for the given event. */
+            person => _.size(person.scrambling[eventId]),
+            /* Sort scramblers by results. */
+            person => _.get(person, `wcaData.personal_records.${eventId}.average.world_rank`),
+            person => _.get(person, `wcaData.personal_records.${eventId}.single.world_rank`),
+          ]);
           const scramblersPromise = askForScramblers
                                   ? selectScramblers(potentialScramblers, scramblersCount, eventId, group.id)
                                   : Promise.resolve(_.take(potentialScramblers, scramblersCount));
@@ -73,11 +83,18 @@ export function assignJudging(allPeople, eventsWithData, stationsCount, staffJud
   _(eventsWithData)
     .reject(([eventId, data]) => selfsufficientEvents.includes(eventId))
     .each(([eventId, { groups, people, peopleSolvingSideEvent }]) => {
-      groups.forEach(group => {
+      groups.forEach((group, groupIndex) => {
         const judgesCount = Math.min(stationsCount, group.peopleSolving.length);
         const additionalJudgesCount = judgesCount - staffJudgesCount;
         if(additionalJudgesCount > 0) {
-          const potentialJudges = sortPeopleToHelp(_.difference(allPeople, group.peopleSolving, group.peopleScrambling, peopleSolvingSideEvent), skipNewcomers);
+          const potentialJudges = _.sortBy(_.difference(allPeople, group.peopleSolving, group.peopleScrambling, peopleSolvingSideEvent), [
+            /* If skipNewcomers is false this doesn't have any effect, otherwise people with WCA ID go first. */
+            person => skipNewcomers && person.wcaId === "",
+            /* If possible, we avoid assigning a task to person solving in the next group. */
+            person => _.get(groups, [groupIndex + 1, 'peopleSolving'], []).includes(person),
+            /* Equally distribute tasks. */
+            person => _.sum(_.map(person.scrambling, _.size)) + _.sum(_.map(person.judging, _.size)),
+          ]);
           group.peopleJudging = _.take(potentialJudges, judgesCount);
           assignTask('judging', group.peopleJudging, eventId, group.id);
         }
@@ -96,15 +113,6 @@ function calculateGroupsCount(eventId, peopleCount, stationsCount, minGroupsCoun
     const calculatedGroupsCount = Math.round(peopleCount / calculatedGroupSize + 0.4);
     return Math.max(calculatedGroupsCount, minGroupsCount);
   }
-}
-
-function sortPeopleToHelp(people, skipNewcomers) {
-  return _.sortBy(people, [
-     /* If skipNewcomers is false this doesn't have any effect, otherwise people with WCA ID go first. */
-    person => skipNewcomers && person.wcaId === "",
-     /* People helping in fewer events go first. */
-    person =>  _.sum(_.map(person.scrambling, _.size)) + _.sum(_.map(person.judging, _.size))
-  ]);
 }
 
 function assignTask(task, people, eventId, groupId) {
