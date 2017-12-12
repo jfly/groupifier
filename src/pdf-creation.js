@@ -80,11 +80,11 @@ export function createScorecardsPdf(eventsWithData, competitionName) {
   const pageWidth = 595;
   const pageHeight = 842;
   const scorecards = _.flatMap(events, eventObject => {
-    let scorecardNumber = 0;
+    let scorecardNumber = _.fromPairs(eventsWithData)[eventObject.id].people.length;
     return _.flatMap(groupsByEvent[eventObject.id], group => {
       const groupScorecards = _.map(group.peopleSolving, person =>
         [
-          { text: scorecardNumber += 1, fontSize: 10 },
+          { text: scorecardNumber--, fontSize: 10 },
           { text: competitionName, bold: true, fontSize: 16, margin: [0, 0, 0, 10], alignment: 'center' },
           {
             margin: [25, 0, 0, 0],
