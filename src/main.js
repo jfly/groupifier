@@ -1,3 +1,4 @@
+
 import 'material-design-lite/material.css';
 import 'material-design-lite/material.js';
 import 'mdl-selectfield/dist/mdl-selectfield.css';
@@ -7,11 +8,15 @@ import '../assets/main.css';
 import { parse as parseCSV } from 'papaparse';
 import _ from 'lodash';
 
+import { signIn, signOut, isSignedIn, getUpcomingManageableCompetitions } from './wca-api';
 import { peopleFromCsvRows, attachWcaDataToPeople } from './people';
 import { assignGroups, assignScrambling, assignJudging } from './groups-assignment';
 import { createPersonalCardsPdf, createSummaryPdf, createScorecardsPdf } from './pdf-creation';
 import { sideEventsByMainEvents } from './simultaneous-events';
 
+const signInLink = document.getElementById('sign-in-link');
+const signOutLink = document.getElementById('sign-out-link');
+const competitionIdSelect = document.getElementById('competition-id-select');
 const fileNameInput = document.getElementById('file-name-input');
 const fileInput = document.getElementById('file-input');
 const competitionNameInput = document.getElementById('competition-name-input');
@@ -69,22 +74,22 @@ button.addEventListener('click', () => {
   });
 });
 
+signInLink.addEventListener('click', event => {
+  event.preventDefault();
+  signIn();
+});
 
-const hash = _.trimStart(window.location.hash, '#');
-const hashParams = new URLSearchParams(hash);
-if (hashParams.has('access_token')) {
-  localStorage.setItem('Groupifier.accessToken', hashParams.get('access_token'));
-  history.replaceState({}, document.title, '.');
-}
-
-const wcaAccessToken = localStorage.getItem('Groupifier.accessToken');
-if (wcaAccessToken) {
-  document.body.classList.add('user-signed-in');
-}
-
-const signOutLink = document.getElementById('sign-out-link');
 signOutLink.addEventListener('click', event => {
   event.preventDefault();
-  localStorage.removeItem('Groupifier.accessToken');
+  signOut();
   document.body.classList.remove('user-signed-in');
 });
+
+if (isSignedIn()) {
+  document.body.classList.add('user-signed-in');
+  getUpcomingManageableCompetitions().then(competitions => {
+    const competitionOptions = competitions.map(competition => `<option value="${competition.id}">${competition.short_name}</option>`);
+    competitionIdSelect.innerHTML = competitionOptions.join('\n');
+    competitionIdSelect.dispatchEvent(new Event('change'))
+  });
+}

@@ -16,7 +16,7 @@
           <span class="mdl-layout-title">Groupifier</span>
           <div class="mdl-layout-spacer"></div>
           <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" id="sign-in-link" data-user-signed-out href="https://staging.worldcubeassociation.org/oauth/authorize?client_id=13981de47748e4687c107d56417e79f11c45f90aa65504e0a6c26a50c3a0fbd9&redirect_uri=http://localhost:8080&response_type=token&scope=manage_competitions">Sign In With WCA</a>
+            <a class="mdl-navigation__link" id="sign-in-link" data-user-signed-out href="">Sign In With WCA</a>
             <a class="mdl-navigation__link" id="sign-out-link" data-user-signed-in href="">Sign Out</a>
           </nav>
         </div>
@@ -40,6 +40,10 @@
               and finally generate personal cards as well as a summary PDF.
             </p>
             <form action="#">
+              <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+                <select id="competition-id-select" class="mdl-selectfield__select"></select>
+                <label class="mdl-selectfield__label" for="competition-id-select">Competition</label>
+              </div>
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input class="mdl-textfield__input" type="text" id="file-name-input" disabled pattern=".*\.csv">
                 <label class="mdl-textfield__label" for="filen-name-input">Registrations CSV</label>
@@ -50,11 +54,6 @@
                   <i class="material-icons">attach_file</i>
                 </label>
                 <input class="hidden-file-input" type="file" id="file-input" accept=".csv">
-              </div>
-              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="competition-name-input" pattern=".+">
-                <label class="mdl-textfield__label" for="compettion-name-input">Competition name</label>
-                <span class="mdl-textfield__error">must be present</span>
               </div>
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input class="mdl-textfield__input" type="text" id="stations-input" pattern="\d*">
