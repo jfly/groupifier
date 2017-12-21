@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 const wcaOrigin = 'https://staging.worldcubeassociation.org';
-const wcaOAuthClientId = '13981de47748e4687c107d56417e79f11c45f90aa65504e0a6c26a50c3a0fbd9';
+const wcaOAuthClientId = 'example-application-id';
 
 saveAccessTokenFromHash();
 let wcaAccessToken = localStorage.getItem('Groupifier.accessToken');

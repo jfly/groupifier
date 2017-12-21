@@ -81,6 +81,10 @@ export function createScorecardsPdf(eventsWithData, wcif) {
   const pageHeight = 842;
   const scorecards = _.flatMap(events, eventObject => {
     let scorecardNumber = _.fromPairs(eventsWithData)[eventObject.id].people.length;
+    const wcifEvent = _.find(wcif.events, { id: eventObject.id });
+    const firstRound = _.get(wcifEvent.rounds, '0', {});
+    const { cutoff, timeLimit } = firstRound;
+    const maxAttemptsCount = { '1': 1, '2': 2, '3': 3, 'm': 3, 'a': 5 }[firstRound.format];
     return _.flatMap(groupsByEvent[eventObject.id], group => {
       const groupScorecards = _.map(group.peopleSolving, person =>
         [
@@ -109,7 +113,7 @@ export function createScorecardsPdf(eventsWithData, wcif) {
                   { border: [false, false, false, false], fontSize: 10, text: 'ID' },
                   { border: [false, false, false, false], fontSize: 10, text: 'Name' }
                 ],
-                [{ text: person.id, alignment: 'center' }, person.name]
+                [{ text: person.id, alignment: 'center' }, { text: person.name, maxHeight: 15 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */ }]
               ]
             }
           },
@@ -124,47 +128,42 @@ export function createScorecardsPdf(eventsWithData, wcif) {
                   { border: [false, false, false, false], fontSize: 10, alignment: 'center', text: 'Judge' },
                   { border: [false, false, false, false], fontSize: 10, alignment: 'center', text: 'Comp' }
                 ],
-                ..._.range(1, eventObject.maxAttemptsCount + 1)
+                ..._.range(1, maxAttemptsCount + 1)
                   .map(attemptNumber => [
                     [{ border: [false, false, false, false], fontSize: 20, alignment: 'center', bold: true, text: attemptNumber }, {}, {} ,{}]
                   ])
-                  .reduce((rows1, rows2) =>
-                    rows1.concat([[{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }]], rows2)
+                  .reduce((rows1, rows2, attemptsCount) =>
+                    rows1.concat([
+                      attemptsCount === _.get(cutoff, 'numberOfAttempts') ?
+                        [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], columns: [
+                          {
+                            canvas: [
+                              {
+                                type: 'line',
+                                x1: 0, y1: 0,
+                                x2: (pageWidth - 4 * scorecardMargin) / 2, y2: 0,
+                                lineWidth: 1,
+                                dash: { length: 5 },
+                              },
+                            ]
+                          }
+                        ]}] :
+                        [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }]
+                    ], rows2)
                   ),
-                // [{ border: [false, false, false, false], fontSize: 20, alignment: 'center', bold: true, text: '1' }, {}, {} ,{}],
-                // [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }],
-                // [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '2' }, {}, {}, {}],
-                // [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], columns: [
-                //   {
-                //     canvas: [
-                //       {
-                //         type: 'line',
-                //         x1: 0, y1: 0,
-                //         x2: (pageWidth - 4 * scorecardMargin) / 2, y2: 0,
-                //         lineWidth: 1,
-                //         dash: { length: 5 },
-                //       },
-                //     ]
-                //   }
-                // ]}],
-                // [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '3' }, {}, {}, {}],
-                // [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }],
-                // [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '4' }, {}, {}, {}],
-                // [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }],
-                // [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '5' }, {}, {}, {}],
                 [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: 'Extra attempt', fontSize: 10 }],
                 [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '_' }, {}, {}, {}],
                 [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }]
               ]
             }
           },
-          // {
-          //   fontSize: 10,
-          //   columns: [
-          //     { text: 'Cutoff: <Cutoff>', alignment: 'center' },
-          //     { text: 'DNF Limit: <Time Limit>', alignment: 'center' }
-          //   ]
-          // },
+          {
+            fontSize: 10,
+            columns: [
+              cutoff ? { text: `Cutoff: ${cutoff.attemptResult}`, alignment: 'center' } : {},
+              timeLimit ? { text: `DNF Limit: ${timeLimit.centiseconds}`, alignment: 'center' } : {}
+            ]
+          },
         ]
       );
       const scorecardsOnLastPage = groupScorecards.length % 4;
