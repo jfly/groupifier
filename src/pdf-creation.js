@@ -73,7 +73,7 @@ export function createSummaryPdf(eventsWithData) {
   return pdfMake.createPdf(documentDefinition);
 }
 
-export function createScorecardsPdf(eventsWithData, competitionName) {
+export function createScorecardsPdf(eventsWithData, wcif) {
   const groupsByEvent = _.mapValues(_.fromPairs(eventsWithData), 'groups');
   const events = eventObjects.filter(eventObject => groupsByEvent[eventObject.id] && eventObject.id !== '333fm');
   const scorecardMargin = 20;
@@ -85,7 +85,7 @@ export function createScorecardsPdf(eventsWithData, competitionName) {
       const groupScorecards = _.map(group.peopleSolving, person =>
         [
           { text: scorecardNumber--, fontSize: 10 },
-          { text: competitionName, bold: true, fontSize: 16, margin: [0, 0, 0, 10], alignment: 'center' },
+          { text: wcif.name, bold: true, fontSize: 16, margin: [0, 0, 0, 10], alignment: 'center' },
           {
             margin: [25, 0, 0, 0],
             table: {

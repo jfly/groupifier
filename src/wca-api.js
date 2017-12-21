@@ -33,6 +33,10 @@ export function getPeopleData(allWcaIds) {
   return Promise.all(promises).then(_.flatten);
 }
 
+export function getCompetitionWcif(competitionId) {
+  return wcaApiFetch(`/competitions/${competitionId}/wcif`).then(response => response.json());
+}
+
 function saveAccessTokenFromHash() {
   const hash = _.trimStart(window.location.hash, '#');
   const hashParams = new URLSearchParams(hash);

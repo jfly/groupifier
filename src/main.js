@@ -8,7 +8,7 @@ import '../assets/main.css';
 import { parse as parseCSV } from 'papaparse';
 import _ from 'lodash';
 
-import { signIn, signOut, isSignedIn, getUpcomingManageableCompetitions } from './wca-api';
+import { signIn, signOut, isSignedIn, getUpcomingManageableCompetitions, getCompetitionWcif } from './wca-api';
 import { peopleFromCsvRows, attachWcaDataToPeople } from './people';
 import { assignGroups, assignScrambling, assignJudging } from './groups-assignment';
 import { createPersonalCardsPdf, createSummaryPdf, createScorecardsPdf } from './pdf-creation';
@@ -19,7 +19,6 @@ const signOutLink = document.getElementById('sign-out-link');
 const competitionIdSelect = document.getElementById('competition-id-select');
 const fileNameInput = document.getElementById('file-name-input');
 const fileInput = document.getElementById('file-input');
-const competitionNameInput = document.getElementById('competition-name-input');
 const stationsInput = document.getElementById('stations-input');
 const scramblersInput = document.getElementById('scramblers-input');
 const staffJudgesInput = document.getElementById('staff-judges-input');
@@ -49,7 +48,7 @@ function updateButtonState() {
 }
 
 button.addEventListener('click', () => {
-  const competitionName = competitionNameInput.value;
+  const competitionId = competitionIdSelect.value;
   const stationsCount = parseInt(stationsInput.value);
   const scramblersCount = parseInt(scramblersInput.value);
   const staffJudgesCount = parseInt(staffJudgesInput.value);
@@ -61,13 +60,13 @@ button.addEventListener('click', () => {
     skipEmptyLines: true,
     complete: ({ data: rows }) => {
       const people = peopleFromCsvRows(rows);
-      attachWcaDataToPeople(people).then(() => {
+      Promise.all([attachWcaDataToPeople(people), getCompetitionWcif(competitionIdSelect.value)]).then(([_, wcif]) => {
         const eventsWithData = assignGroups(people, stationsCount, sortByResults, sideEventsByMainEvents());
         assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers).then(() => {
           assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers);
           createPersonalCardsPdf(people).open();
           createSummaryPdf(eventsWithData).open();
-          createScorecardsPdf(eventsWithData, competitionName).open();
+          createScorecardsPdf(eventsWithData, wcif).open();
         });
       });
     }
