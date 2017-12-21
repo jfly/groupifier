@@ -11,6 +11,20 @@ html, body {
   display: none;
 }
 
+.app-icon {
+  font-size: 32px;
+}
+
+/* Modifiers conditionally displaying content depending on whether the user is signed in or not. */
+
+body:not(.user-signed-in) [data-user-signed-in] {
+  display: none;
+}
+
+body.user-signed-in [data-user-signed-out] {
+  display: none;
+}
+
 .actions {
   padding-top: 20px;
 }

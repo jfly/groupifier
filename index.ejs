@@ -6,107 +6,133 @@
     <base href="<%= htmlWebpackPlugin.options.base %>">
     <title>Groupifier</title>
   </head>
-  <body>
-    <div class="mdl-grid">
-      <div class="mdl-layout-spacer"></div>
-      <div class="mdl-cell mdl-cell--4-col">
-        <p>
-          Select a CSV file containing registrations and specify configuration options.
-          The tool will split competitors into groups, assign tasks (scrambling and judging) to them,
-          and finally generate personal cards as well as a summary PDF.
-        </p>
-        <form action="#">
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="file-name-input" disabled pattern=".*\.csv">
-            <label class="mdl-textfield__label" for="filen-name-input">Registrations CSV</label>
-            <span class="mdl-textfield__error">must be a CSV file</span>
+  <body class="user-signed-out">
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <header class="mdl-layout__header">
+        <div class="mdl-layout-icon">
+          <i class="material-icons app-icon">group</i>
+        </div>
+        <div class="mdl-layout__header-row">
+          <span class="mdl-layout-title">Groupifier</span>
+          <div class="mdl-layout-spacer"></div>
+          <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" id="sign-in-link" data-user-signed-out href="https://staging.worldcubeassociation.org/oauth/authorize?client_id=13981de47748e4687c107d56417e79f11c45f90aa65504e0a6c26a50c3a0fbd9&redirect_uri=http://localhost:8080&response_type=token&scope=manage_competitions">Sign In With WCA</a>
+            <a class="mdl-navigation__link" id="sign-out-link" data-user-signed-in href="">Sign Out</a>
+          </nav>
+        </div>
+      </header>
+      <main class="mdl-layout__content">
+        <!-- Presentation content. -->
+        <div class="mdl-grid" data-user-signed-out>
+          <div class="mdl-layout-spacer"></div>
+          <div class="mdl-cell mdl-cell--4-col">
+            A fancy description goes here.
           </div>
-          <div class="mdl-button mdl-button--primary mdl-button--icon">
-            <label for="file-input">
-              <i class="material-icons">attach_file</i>
-            </label>
-            <input class="hidden-file-input" type="file" id="file-input" accept=".csv">
+          <div class="mdl-layout-spacer"></div>
+        </div>
+        <!-- The actual application content. -->
+        <div class="mdl-grid" data-user-signed-in>
+          <div class="mdl-layout-spacer"></div>
+          <div class="mdl-cell mdl-cell--4-col">
+            <p>
+              Select a CSV file containing registrations and specify configuration options.
+              The tool will split competitors into groups, assign tasks (scrambling and judging) to them,
+              and finally generate personal cards as well as a summary PDF.
+            </p>
+            <form action="#">
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="file-name-input" disabled pattern=".*\.csv">
+                <label class="mdl-textfield__label" for="filen-name-input">Registrations CSV</label>
+                <span class="mdl-textfield__error">must be a CSV file</span>
+              </div>
+              <div class="mdl-button mdl-button--primary mdl-button--icon">
+                <label for="file-input">
+                  <i class="material-icons">attach_file</i>
+                </label>
+                <input class="hidden-file-input" type="file" id="file-input" accept=".csv">
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="competition-name-input" pattern=".+">
+                <label class="mdl-textfield__label" for="compettion-name-input">Competition name</label>
+                <span class="mdl-textfield__error">must be present</span>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="stations-input" pattern="\d*">
+                <label class="mdl-textfield__label" for="stations-input">Stations count</label>
+                <span class="mdl-textfield__error">must be a natural number</span>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="scramblers-input" pattern="\d*">
+                <label class="mdl-textfield__label" for="scramblers-input">Scramblers count</label>
+                <span class="mdl-textfield__error">must be a natural number</span>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="staff-judges-input" pattern="\d*">
+                <label class="mdl-textfield__label" for="staff-judges-input">Staff judges count</label>
+                <span class="mdl-textfield__error">must be a natural number</span>
+              </div>
+              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="sort-by-results-input">
+                <input class="mdl-checkbox__input" type="checkbox" id="sort-by-results-input" checked>
+                <span class="mdl-checkbox__label">Sort competitors by their results</span>
+              </label>
+              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="ask-for-scramblers-input">
+                <input class="mdl-checkbox__input" type="checkbox" id="ask-for-scramblers-input">
+                <span class="mdl-checkbox__label">Ask me to select scramblers manually</span>
+              </label>
+              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="skip-newcomers-input">
+                <input class="mdl-checkbox__input" type="checkbox" id="skip-newcomers-input" checked>
+                <span class="mdl-checkbox__label">Skip newcomers during tasks assignment</span>
+              </label>
+              <div>
+                <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="simultaneous-events-label">
+                  Creates separate groups for people starting in side events that are being held at the same time.
+                  <br>E.g. use it to make all FMC participants start in the first group of 3x3x3 Cube,
+                  so that all of them can do a FMC attempt afterwards.
+                  <br>Important: select event pairs only for <strong>first rounds</strong> of the main events.
+                  Don't specify events if you don't want to have such separate groups,
+                  e.g. in case people are given the whole day to do their MBLD attemps.
+                </div>
+                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" id="simultaneous-events-label" for="simultaneous-events-input">
+                  <input class="mdl-checkbox__input" type="checkbox" id="simultaneous-events-input">
+                  <span class="mdl-checkbox__label">Simultaneous events</span>
+                </label>
+                <table id="simultaneous-events-table" class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                  <thead>
+                    <tr>
+                      <th class="mdl-data-table__cell--non-numeric">Main event</th>
+                      <th class="mdl-data-table__cell--non-numeric">Side event</th>
+                      <th class="mdl-data-table__cell--non-numeric"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr id="simultaneous-events-form">
+                      <td class="mdl-data-table__cell--non-numeric">
+                        <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label event-selectfield">
+                          <select id="main-event" class="mdl-selectfield__select"></select>
+                        </div>
+                      </td>
+                      <td class="mdl-data-table__cell--non-numeric">
+                        <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label event-selectfield">
+                          <select id="side-event" class="mdl-selectfield__select"></select>
+                        </div>
+                      </td>
+                      <td class="mdl-data-table__cell--non-numeric">
+                        <button type="button" class="mdl-button mdl-js-button mdl-button--primary mdl-button--icon" id="add-simultaneous-events">
+                          <i class="material-icons">add</i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="actions">
+                <button type="button" class="mdl-button mdl-js-button mdl-button--raised" id="generate" disabled>Generate</button>
+              </div>
+            </form>
           </div>
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="competition-name-input" pattern=".+">
-            <label class="mdl-textfield__label" for="compettion-name-input">Competition name</label>
-            <span class="mdl-textfield__error">must be present</span>
-          </div>
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="stations-input" pattern="\d*">
-            <label class="mdl-textfield__label" for="stations-input">Stations count</label>
-            <span class="mdl-textfield__error">must be a natural number</span>
-          </div>
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="scramblers-input" pattern="\d*">
-            <label class="mdl-textfield__label" for="scramblers-input">Scramblers count</label>
-            <span class="mdl-textfield__error">must be a natural number</span>
-          </div>
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="staff-judges-input" pattern="\d*">
-            <label class="mdl-textfield__label" for="staff-judges-input">Staff judges count</label>
-            <span class="mdl-textfield__error">must be a natural number</span>
-          </div>
-          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="sort-by-results-input">
-            <input class="mdl-checkbox__input" type="checkbox" id="sort-by-results-input" checked>
-            <span class="mdl-checkbox__label">Sort competitors by their results</span>
-          </label>
-          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="ask-for-scramblers-input">
-            <input class="mdl-checkbox__input" type="checkbox" id="ask-for-scramblers-input">
-            <span class="mdl-checkbox__label">Ask me to select scramblers manually</span>
-          </label>
-          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="skip-newcomers-input">
-            <input class="mdl-checkbox__input" type="checkbox" id="skip-newcomers-input" checked>
-            <span class="mdl-checkbox__label">Skip newcomers during tasks assignment</span>
-          </label>
-          <div>
-            <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="simultaneous-events-label">
-              Creates separate groups for people starting in side events that are being held at the same time.
-              <br>E.g. use it to make all FMC participants start in the first group of 3x3x3 Cube,
-              so that all of them can do a FMC attempt afterwards.
-              <br>Important: select event pairs only for <strong>first rounds</strong> of the main events.
-              Don't specify events if you don't want to have such separate groups,
-              e.g. in case people are given the whole day to do their MBLD attemps.
-            </div>
-            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" id="simultaneous-events-label" for="simultaneous-events-input">
-              <input class="mdl-checkbox__input" type="checkbox" id="simultaneous-events-input">
-              <span class="mdl-checkbox__label">Simultaneous events</span>
-            </label>
-            <table id="simultaneous-events-table" class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-              <thead>
-                <tr>
-                  <th class="mdl-data-table__cell--non-numeric">Main event</th>
-                  <th class="mdl-data-table__cell--non-numeric">Side event</th>
-                  <th class="mdl-data-table__cell--non-numeric"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr id="simultaneous-events-form">
-                  <td class="mdl-data-table__cell--non-numeric">
-                    <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label event-selectfield">
-                      <select id="main-event" class="mdl-selectfield__select"></select>
-                    </div>
-                  </td>
-                  <td class="mdl-data-table__cell--non-numeric">
-                    <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label event-selectfield">
-                      <select id="side-event" class="mdl-selectfield__select"></select>
-                    </div>
-                  </td>
-                  <td class="mdl-data-table__cell--non-numeric">
-                    <button type="button" class="mdl-button mdl-js-button mdl-button--primary mdl-button--icon" id="add-simultaneous-events">
-                      <i class="material-icons">add</i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="actions">
-            <button type="button" class="mdl-button mdl-js-button mdl-button--raised" id="generate" disabled>Generate</button>
-          </div>
-        </form>
-      </div>
-      <div class="mdl-layout-spacer"></div>
+          <div class="mdl-layout-spacer"></div>
+        </div>
+      </main>
     </div>
 
     <dialog class="mdl-dialog scramblers-dialog">

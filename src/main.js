@@ -68,3 +68,23 @@ button.addEventListener('click', () => {
     }
   });
 });
+
+
+const hash = _.trimStart(window.location.hash, '#');
+const hashParams = new URLSearchParams(hash);
+if (hashParams.has('access_token')) {
+  localStorage.setItem('Groupifier.accessToken', hashParams.get('access_token'));
+  history.replaceState({}, document.title, '.');
+}
+
+const wcaAccessToken = localStorage.getItem('Groupifier.accessToken');
+if (wcaAccessToken) {
+  document.body.classList.add('user-signed-in');
+}
+
+const signOutLink = document.getElementById('sign-out-link');
+signOutLink.addEventListener('click', event => {
+  event.preventDefault();
+  localStorage.removeItem('Groupifier.accessToken');
+  document.body.classList.remove('user-signed-in');
+});
