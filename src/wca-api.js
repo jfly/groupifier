@@ -25,6 +25,14 @@ export function getUpcomingManageableCompetitions() {
     .then(response => response.json());
 }
 
+export function getPeopleData(allWcaIds) {
+  const promises = _.map(_.chunk(allWcaIds, 100), wcaIds =>
+    wcaApiFetch(`/persons?per_page=100&wca_ids=${wcaIds.join(',')}`)
+      .then(response => response.json())
+  );
+  return Promise.all(promises).then(_.flatten);
+}
+
 function saveAccessTokenFromHash() {
   const hash = _.trimStart(window.location.hash, '#');
   const hashParams = new URLSearchParams(hash);
