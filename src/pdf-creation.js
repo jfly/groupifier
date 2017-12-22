@@ -6,6 +6,7 @@ import pdfMakeFonts from 'pdfmake/build/vfs_fonts';
 pdfMake.vfs = pdfMakeFonts.pdfMake.vfs;
 
 import { eventObjects } from './events';
+import { cutoffToString, timeLimitToString } from './helpers';
 
 export function createPersonalCardsPdf(people) {
   const competitionEvents = _(people).map('events').flatten().uniq().value();
@@ -160,8 +161,8 @@ export function createScorecardsPdf(eventsWithData, wcif) {
           {
             fontSize: 10,
             columns: [
-              cutoff ? { text: `Cutoff: ${cutoff.attemptResult}`, alignment: 'center' } : {},
-              timeLimit ? { text: `DNF Limit: ${timeLimit.centiseconds}`, alignment: 'center' } : {}
+              cutoff ? { text: `Cutoff: ${cutoffToString(cutoff, eventObject.id)}`, alignment: 'center' } : {},
+              timeLimit ? { text: `DNF Limit: ${timeLimitToString(timeLimit)}`, alignment: 'center' } : {}
             ]
           },
         ]

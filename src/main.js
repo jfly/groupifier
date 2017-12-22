@@ -87,7 +87,7 @@ signOutLink.addEventListener('click', event => {
 if (isSignedIn()) {
   document.body.classList.add('user-signed-in');
   getUpcomingManageableCompetitions().then(competitions => {
-    const competitionOptions = competitions.map(competition => `<option value="${competition.id}">${competition.short_name}</option>`);
+    const competitionOptions = competitions.reverse().map(competition => `<option value="${competition.id}">${competition.short_name}</option>`);
     competitionIdSelect.innerHTML = competitionOptions.join('\n');
     competitionIdSelect.dispatchEvent(new Event('change'))
   });
