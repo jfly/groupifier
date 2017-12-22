@@ -77,15 +77,19 @@ export function createSummaryPdf(eventsWithData) {
 export function createScorecardsPdf(eventsWithData, wcif) {
   const groupsByEvent = _.mapValues(_.fromPairs(eventsWithData), 'groups');
   const events = eventObjects.filter(eventObject => groupsByEvent[eventObject.id] && eventObject.id !== '333fm');
+  const maxAttemptsCountByFormat = { '1': 1, '2': 2, '3': 3, 'm': 3, 'a': 5 };
   const scorecardMargin = 20;
   const pageWidth = 595;
   const pageHeight = 842;
+  const columnLabels = (labels, style = {}) =>
+    labels.map(label => _.assign({ border: [false, false, false, false], fontSize: 10, text: label }, style));
+
   const scorecards = _.flatMap(events, eventObject => {
     let scorecardNumber = _.fromPairs(eventsWithData)[eventObject.id].people.length;
     const wcifEvent = _.find(wcif.events, { id: eventObject.id });
     const firstRound = _.get(wcifEvent.rounds, '0', {});
     const { cutoff, timeLimit } = firstRound;
-    const maxAttemptsCount = { '1': 1, '2': 2, '3': 3, 'm': 3, 'a': 5 }[firstRound.format];
+    const maxAttemptsCount = maxAttemptsCountByFormat[firstRound.format];
     return _.flatMap(groupsByEvent[eventObject.id], group => {
       const groupScorecards = _.map(group.peopleSolving, person =>
         [
@@ -96,11 +100,7 @@ export function createScorecardsPdf(eventsWithData, wcif) {
             table: {
               widths: ['*', 'auto', 'auto'],
               body: [
-                [
-                  { border: [false, false, false, false], fontSize: 10, text: 'Event' },
-                  { border: [false, false, false, false], fontSize: 10, text: 'Round' },
-                  { border: [false, false, false, false], fontSize: 10, text: 'Group' }
-                ],
+                columnLabels(['Event', 'Round', 'Group']),
                 [eventObject.name, { text: '1', alignment: 'center' }, { text: group.id, alignment: 'center' }]
               ]
             }
@@ -110,10 +110,7 @@ export function createScorecardsPdf(eventsWithData, wcif) {
             table: {
               widths: ['auto', '*'],
               body: [
-                [
-                  { border: [false, false, false, false], fontSize: 10, text: 'ID' },
-                  { border: [false, false, false, false], fontSize: 10, text: 'Name' }
-                ],
+                columnLabels(['ID', 'Name']),
                 [{ text: person.id, alignment: 'center' }, { text: person.name, maxHeight: 15 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */ }]
               ]
             }
@@ -123,38 +120,29 @@ export function createScorecardsPdf(eventsWithData, wcif) {
             table: {
               widths: [16, '*', 30, 30], /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */
               body: [
-                [
-                  { border: [false, false, false, false], fontSize: 10, text: '' },
-                  { border: [false, false, false, false], fontSize: 10, alignment: 'center', text: 'Result' },
-                  { border: [false, false, false, false], fontSize: 10, alignment: 'center', text: 'Judge' },
-                  { border: [false, false, false, false], fontSize: 10, alignment: 'center', text: 'Comp' }
-                ],
+                columnLabels(['', 'Result', 'Judge', 'Comp'], { alignment: 'center' }),
                 ..._.range(1, maxAttemptsCount + 1)
                   .map(attemptNumber => [
-                    [{ border: [false, false, false, false], fontSize: 20, alignment: 'center', bold: true, text: attemptNumber }, {}, {} ,{}]
+                    [{ text: attemptNumber, border: [false, false, false, false], fontSize: 20, alignment: 'center', bold: true }, {}, {} ,{}]
                   ])
                   .reduce((rows1, rows2, attemptsCount) =>
-                    rows1.concat([
-                      attemptsCount === _.get(cutoff, 'numberOfAttempts') ?
-                        [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], columns: [
-                          {
-                            canvas: [
-                              {
-                                type: 'line',
-                                x1: 0, y1: 0,
-                                x2: (pageWidth - 4 * scorecardMargin) / 2, y2: 0,
-                                lineWidth: 1,
-                                dash: { length: 5 },
-                              },
-                            ]
-                          }
-                        ]}] :
-                        [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }]
-                    ], rows2)
+                    rows1.concat([[
+                      {
+                        border: [false, false, false, false], colSpan: 4, margin: [0, 1],
+                        columns: (attemptsCount === _.get(cutoff, 'numberOfAttempts') ? [{
+                          canvas: [{
+                            type: 'line',
+                            x1: 0, y1: 0,
+                            x2: (pageWidth - 4 * scorecardMargin) / 2, y2: 0,
+                            dash: { length: 5 },
+                          }]
+                        }] : [])
+                      }
+                    ]], rows2)
                   ),
-                [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: 'Extra attempt', fontSize: 10 }],
-                [{ border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true, text: '_' }, {}, {}, {}],
-                [{ border: [false, false, false, false], colSpan: 4, margin: [0, 1], text: '' }]
+                [{ text: 'Extra attempt', border: [false, false, false, false], colSpan: 4, margin: [0, 1], fontSize: 10 }],
+                [{ text: '_', border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true }, {}, {}, {}],
+                [{ text: '', border: [false, false, false, false], colSpan: 4, margin: [0, 1] }]
               ]
             }
           },
@@ -172,7 +160,6 @@ export function createScorecardsPdf(eventsWithData, wcif) {
     });
   });
   const documentDefinition = {
-    pageMargins: scorecardMargin,
     background: [
       {
         canvas: [
@@ -195,10 +182,9 @@ export function createScorecardsPdf(eventsWithData, wcif) {
         ]
       },
     ],
+    pageMargins: scorecardMargin,
     content: {
       layout: {
-        vLineColor: '#999999',
-        hLineColor: '#999999',
         paddingLeft: i => (i % 2 === 0 ? 0 : scorecardMargin),
         paddingRight: i => (i % 2 === 0 ? scorecardMargin : 0),
         paddingTop: i => (i % 2 === 0 ? 0 : scorecardMargin),
