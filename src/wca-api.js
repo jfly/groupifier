@@ -7,7 +7,8 @@ saveAccessTokenFromHash();
 let wcaAccessToken = localStorage.getItem('Groupifier.accessToken');
 
 export function signIn() {
-  window.location = `${wcaOrigin}/oauth/authorize?client_id=${wcaOAuthClientId}&response_type=token&redirect_uri=${window.location.origin}&scope=manage_competitions`;
+  const redirectUri = _.trimEnd(window.location.href, '/');
+  window.location = `${wcaOrigin}/oauth/authorize?client_id=${wcaOAuthClientId}&response_type=token&redirect_uri=${redirectUri}&scope=manage_competitions`;
 }
 
 export function signOut() {
