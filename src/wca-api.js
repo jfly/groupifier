@@ -53,7 +53,7 @@ function wcaApiFetch(path, fetchOptions) {
   return fetch(`${baseApiUrl}${path}`, _.assign({}, fetchOptions, {
     headers: new Headers({
       'Authorization': `Bearer ${wcaAccessToken}`,
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     })
   }));
 }

@@ -44,7 +44,7 @@ let config = {
     }),
     new ExtractTextPlugin({ filename: '[name].[hash].css', disable: !production }),
     new webpack.DefinePlugin({
-      WCA_ORIGIN_URL: JSON.stringify(production ? 'https://www.worldcubeassociation.org/' : 'https://staging.worldcubeassociation.org'),
+      WCA_ORIGIN_URL: JSON.stringify(production ? 'https://www.worldcubeassociation.org' : 'https://staging.worldcubeassociation.org'),
       WCA_OAUTH_CLIENT_ID: JSON.stringify(production ? 'd965f9184bbcf9dfade91e2327c05e2aedef7cd7b6c01c1de7e3e23d62530e5a' : 'example-application-id')
     })
   ],
