@@ -34,17 +34,23 @@ fileInput.addEventListener('change', event => {
   fileNameInput.parentNode.MaterialTextfield.checkValidity();
   updateButtonState();
 });
+
 /* Enable/disable the button depending on the form validity. */
-const inputs = _.toArray(document.querySelectorAll('input[type="text"]'));
-inputs.forEach(element => {
-  element.addEventListener('input', () => {
-    element.required = true; /* Setting this sooner results in validation messages shown on the page load. See: https://github.com/google/material-design-lite/issues/1502 */
-    updateButtonState();
+const controlsByEvent = {
+  input: _.toArray(document.querySelectorAll('input[type="text"]')),
+  change: [competitionIdSelect]
+};
+_.each(controlsByEvent, (controls, eventName) => {
+  controls.forEach(element => {
+    element.addEventListener(eventName, () => {
+      element.required = true; /* Setting this sooner results in validation messages shown on the page load. See: https://github.com/google/material-design-lite/issues/1502 */
+      updateButtonState();
+    });
   });
 });
 
 function updateButtonState() {
-  button.disabled = !inputs.every(input => input.value && input.validity.valid);
+  button.disabled = !_.flatMap(controlsByEvent).every(control => control.value && control.validity.valid);
 }
 
 button.addEventListener('click', () => {
@@ -60,7 +66,7 @@ button.addEventListener('click', () => {
     skipEmptyLines: true,
     complete: ({ data: rows }) => {
       const people = peopleFromCsvRows(rows);
-      Promise.all([attachWcaDataToPeople(people), getCompetitionWcif(competitionIdSelect.value)]).then(([_, wcif]) => {
+      Promise.all([getCompetitionWcif(competitionIdSelect.value), attachWcaDataToPeople(people)]).then(([wcif]) => {
         const eventsWithData = assignGroups(people, stationsCount, sortByResults, sideEventsByMainEvents());
         assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers).then(() => {
           assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers);
