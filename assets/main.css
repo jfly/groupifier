@@ -7,6 +7,19 @@ html, body {
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
 
+a {
+  text-decoration: none;
+}
+
+.app-footer {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.app-footer .material-icons {
+  vertical-align: middle;
+}
+
 .hidden-file-input {
   display: none;
 }

@@ -22,22 +22,62 @@
         </div>
       </header>
       <main class="mdl-layout__content">
-        <!-- Presentation content. -->
-        <div class="mdl-grid" data-user-signed-out>
+        <div class="mdl-grid">
           <div class="mdl-layout-spacer"></div>
-          <div class="mdl-cell mdl-cell--4-col">
-            A fancy description goes here.
+          <!-- Presentation content. -->
+          <div class="mdl-cell mdl-cell--6-col" data-user-signed-out>
+            <h3>What is Groupifier?</h3>
+            <p>
+              It is a tool meant for <a href="https://www.worldcubeassociation.org/" target="_blank">WCA</a> competition organizers.
+              Its main objective is to simplify the process of splitting competitors into groups
+              and provide the best result with minimal configuration.
+            </p>
+            <h3>What does it do?</h3>
+            <ul class="mdl-list">
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  <i class="material-icons mdl-list__item-icon">check</i>
+                  Automatically calculates a suitable group size.
+                </span>
+              </li>
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  <i class="material-icons mdl-list__item-icon">check</i>
+                  Assigns tasks to people (scrambling, judging). Allows to select scramblers manually from a list.
+                </span>
+              </li>
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  <i class="material-icons mdl-list__item-icon">check</i>
+                  Unless told otherwise, sorts competitors by their official results, so that each subsequent group represents a better level.
+                </span>
+              </li>
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  <i class="material-icons mdl-list__item-icon">check</i>
+                  Handles events being held simultaneous by creating separate groups for people taking part in both main and side event.
+                </span>
+              </li>
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  <i class="material-icons mdl-list__item-icon">check</i>
+                  Generates PDFs containing scorecards, personal cards with task assignment and a summary for each round.
+                </span>
+              </li>
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  <i class="material-icons mdl-list__item-icon">check</i>
+                  Fetches cutoffs and time limits from the WCA website and puts them on scorecards.
+                </span>
+              </li>
+            </ul>
           </div>
-          <div class="mdl-layout-spacer"></div>
-        </div>
-        <!-- The actual application content. -->
-        <div class="mdl-grid" data-user-signed-in>
-          <div class="mdl-layout-spacer"></div>
-          <div class="mdl-cell mdl-cell--4-col">
+          <!-- The actual application content. -->
+          <div class="mdl-cell mdl-cell--4-col" data-user-signed-in>
             <p>
               Select a CSV file containing registrations and specify configuration options.
-              The tool will split competitors into groups, assign tasks (scrambling and judging) to them,
-              and finally generate personal cards as well as a summary PDF.
+              The tool will split competitors into groups, assign tasks to them (scrambling and judging),
+              and finally generate scorecards, personal cards and a summary PDF.
             </p>
             <form action="#">
               <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
@@ -74,13 +114,13 @@
                 <input class="mdl-checkbox__input" type="checkbox" id="sort-by-results-input" checked>
                 <span class="mdl-checkbox__label">Sort competitors by their results</span>
               </label>
+              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="skip-newcomers-input">
+                <input class="mdl-checkbox__input" type="checkbox" id="skip-newcomers-input" checked>
+                <span class="mdl-checkbox__label">Skip newcomers during task assignment</span>
+              </label>
               <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="ask-for-scramblers-input">
                 <input class="mdl-checkbox__input" type="checkbox" id="ask-for-scramblers-input">
                 <span class="mdl-checkbox__label">Ask me to select scramblers manually</span>
-              </label>
-              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="skip-newcomers-input">
-                <input class="mdl-checkbox__input" type="checkbox" id="skip-newcomers-input" checked>
-                <span class="mdl-checkbox__label">Skip newcomers during tasks assignment</span>
               </label>
               <div>
                 <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="simultaneous-events-label">
@@ -131,6 +171,30 @@
           </div>
           <div class="mdl-layout-spacer"></div>
         </div>
+        <footer class="mdl-mini-footer app-footer">
+          <div class="mdl-mini-footer__left-section">
+            <ul class="mdl-mini-footer__link-list">
+              <li>
+                Made with <i class="material-icons">favorite</i>
+                by <a href="https://github.com/jonatanklosko" target="_blank">Jonatan Kłosko</a>
+              </li>
+            </ul>
+          </div>
+          <div class="mdl-mini-footer__right-section">
+            <ul class="mdl-mini-footer__link-list">
+              <li>
+                <a href="https://github.com/jonatanklosko/groupifier" target="_blank">
+                  <img src="https://png.icons8.com/ios-glyphs/28/9e9e9e/github.png" alt="GitHub">
+                </a>
+              </li>
+              <li>
+                <a href="mailto:jonatanklosko@gmail.com" target="_blank">
+                  <i class="material-icons">email</i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </footer>
       </main>
     </div>
 
