@@ -11771,7 +11771,34 @@ html, body {
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
 
+a {
+  text-decoration: none;
+}
+
+.app-footer {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.app-footer .material-icons {
+  vertical-align: middle;
+}
+
 .hidden-file-input {
+  display: none;
+}
+
+.app-icon {
+  font-size: 32px;
+}
+
+/* Modifiers conditionally displaying content depending on whether the user is signed in or not. */
+
+body:not(.user-signed-in) [data-user-signed-in] {
+  display: none;
+}
+
+body.user-signed-in [data-user-signed-out] {
   display: none;
 }
 

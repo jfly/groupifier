@@ -5,108 +5,198 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base href="/groupifier/">
     <title>Groupifier</title>
-  <meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#fff"><meta name="application-name" content="groupifier"><link rel="apple-touch-icon" sizes="57x57" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-180x180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="groupifier"><link rel="icon" type="image/png" sizes="32x32" href="icons-cdcb187fa744fa56469b7241ae4ef73c/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="icons-cdcb187fa744fa56469b7241ae4ef73c/favicon-16x16.png"><link rel="shortcut icon" href="icons-cdcb187fa744fa56469b7241ae4ef73c/favicon.ico"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 1)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-320x460.png"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-640x920.png"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-640x1096.png"><link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-750x1294.png"><link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 3)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-1182x2208.png"><link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 3)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-1242x2148.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 1)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-748x1024.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 1)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-768x1004.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-1496x2048.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-1536x2008.png"><link href="main.d49451a240b0e9a7ba05.css" rel="stylesheet"></head>
-  <body>
-    <div class="mdl-grid">
-      <div class="mdl-layout-spacer"></div>
-      <div class="mdl-cell mdl-cell--4-col">
-        <p>
-          Select a CSV file containing registrations and specify configuration options.
-          The tool will split competitors into groups, assign tasks (scrambling and judging) to them,
-          and finally generate personal cards as well as a summary PDF.
-        </p>
-        <form action="#">
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="file-name-input" disabled pattern=".*\.csv">
-            <label class="mdl-textfield__label" for="filen-name-input">Registrations CSV</label>
-            <span class="mdl-textfield__error">must be a CSV file</span>
+  <meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#fff"><meta name="application-name" content="groupifier"><link rel="apple-touch-icon" sizes="57x57" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-icon-180x180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="groupifier"><link rel="icon" type="image/png" sizes="32x32" href="icons-cdcb187fa744fa56469b7241ae4ef73c/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="icons-cdcb187fa744fa56469b7241ae4ef73c/favicon-16x16.png"><link rel="shortcut icon" href="icons-cdcb187fa744fa56469b7241ae4ef73c/favicon.ico"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 1)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-320x460.png"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-640x920.png"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-640x1096.png"><link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-750x1294.png"><link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 3)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-1182x2208.png"><link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 3)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-1242x2148.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 1)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-748x1024.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 1)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-768x1004.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-1496x2048.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)" href="icons-cdcb187fa744fa56469b7241ae4ef73c/apple-touch-startup-image-1536x2008.png"><link href="main.befb12838894f4aea3e0.css" rel="stylesheet"></head>
+  <body class="user-signed-out">
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <header class="mdl-layout__header">
+        <div class="mdl-layout-icon">
+          <i class="material-icons app-icon">group</i>
+        </div>
+        <div class="mdl-layout__header-row">
+          <span class="mdl-layout-title">Groupifier</span>
+          <div class="mdl-layout-spacer"></div>
+          <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" id="sign-in-link" data-user-signed-out href="">Sign In With WCA</a>
+            <a class="mdl-navigation__link" id="sign-out-link" data-user-signed-in href="">Sign Out</a>
+          </nav>
+        </div>
+      </header>
+      <main class="mdl-layout__content">
+        <div class="mdl-grid">
+          <div class="mdl-layout-spacer"></div>
+          <!-- Presentation content. -->
+          <div class="mdl-cell mdl-cell--6-col" data-user-signed-out>
+            <h3>What is Groupifier?</h3>
+            <p>
+              It is a tool meant for <a href="https://www.worldcubeassociation.org/" target="_blank">WCA</a> competition organizers.
+              Its main objective is to simplify the process of splitting competitors into groups
+              and provide the best result with minimal configuration.
+            </p>
+            <h3>What does it do?</h3>
+            <ul class="mdl-list">
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  <i class="material-icons mdl-list__item-icon">check</i>
+                  Automatically calculates a suitable group size.
+                </span>
+              </li>
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  <i class="material-icons mdl-list__item-icon">check</i>
+                  Assigns tasks to people (scrambling, judging). Allows to select scramblers manually from a list.
+                </span>
+              </li>
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  <i class="material-icons mdl-list__item-icon">check</i>
+                  Unless told otherwise, sorts competitors by their official results, so that each subsequent group represents a better level.
+                </span>
+              </li>
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  <i class="material-icons mdl-list__item-icon">check</i>
+                  Handles events being held simultaneous by creating separate groups for people taking part in both main and side event.
+                </span>
+              </li>
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  <i class="material-icons mdl-list__item-icon">check</i>
+                  Generates PDFs containing scorecards, personal cards with task assignment and a summary for each round.
+                </span>
+              </li>
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  <i class="material-icons mdl-list__item-icon">check</i>
+                  Fetches cutoffs and time limits from the WCA website and puts them on scorecards.
+                </span>
+              </li>
+            </ul>
           </div>
-          <div class="mdl-button mdl-button--primary mdl-button--icon">
-            <label for="file-input">
-              <i class="material-icons">attach_file</i>
-            </label>
-            <input class="hidden-file-input" type="file" id="file-input" accept=".csv">
+          <!-- The actual application content. -->
+          <div class="mdl-cell mdl-cell--4-col" data-user-signed-in>
+            <p>
+              Select a CSV file containing registrations and specify configuration options.
+              The tool will split competitors into groups, assign tasks to them (scrambling and judging),
+              and finally generate scorecards, personal cards and a summary PDF.
+            </p>
+            <form action="#">
+              <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+                <select id="competition-id-select" class="mdl-selectfield__select"></select>
+                <label class="mdl-selectfield__label" for="competition-id-select">Competition</label>
+                <span class="mdl-selectfield__error">you have no upcoming competitions to manage</span>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="file-name-input" disabled pattern=".*\.csv">
+                <label class="mdl-textfield__label" for="filen-name-input">Registrations CSV</label>
+                <span class="mdl-textfield__error">must be a CSV file</span>
+              </div>
+              <div class="mdl-button mdl-button--primary mdl-button--icon">
+                <label for="file-input">
+                  <i class="material-icons">attach_file</i>
+                </label>
+                <input class="hidden-file-input" type="file" id="file-input" accept=".csv">
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="stations-input" pattern="\d*">
+                <label class="mdl-textfield__label" for="stations-input">Stations count</label>
+                <span class="mdl-textfield__error">must be a natural number</span>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="scramblers-input" pattern="\d*">
+                <label class="mdl-textfield__label" for="scramblers-input">Scramblers count</label>
+                <span class="mdl-textfield__error">must be a natural number</span>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="staff-judges-input" pattern="\d*">
+                <label class="mdl-textfield__label" for="staff-judges-input">Staff judges count</label>
+                <span class="mdl-textfield__error">must be a natural number</span>
+              </div>
+              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="sort-by-results-input">
+                <input class="mdl-checkbox__input" type="checkbox" id="sort-by-results-input" checked>
+                <span class="mdl-checkbox__label">Sort competitors by their results</span>
+              </label>
+              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="skip-newcomers-input">
+                <input class="mdl-checkbox__input" type="checkbox" id="skip-newcomers-input" checked>
+                <span class="mdl-checkbox__label">Skip newcomers during task assignment</span>
+              </label>
+              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="ask-for-scramblers-input">
+                <input class="mdl-checkbox__input" type="checkbox" id="ask-for-scramblers-input">
+                <span class="mdl-checkbox__label">Ask me to select scramblers manually</span>
+              </label>
+              <div>
+                <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="simultaneous-events-label">
+                  Creates separate groups for people starting in side events that are being held at the same time.
+                  <br>E.g. use it to make all FMC participants start in the first group of 3x3x3 Cube,
+                  so that all of them can do a FMC attempt afterwards.
+                  <br>Important: select event pairs only for <strong>first rounds</strong> of the main events.
+                  Don't specify events if you don't want to have such separate groups,
+                  e.g. in case people are given the whole day to do their MBLD attemps.
+                </div>
+                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" id="simultaneous-events-label" for="simultaneous-events-input">
+                  <input class="mdl-checkbox__input" type="checkbox" id="simultaneous-events-input">
+                  <span class="mdl-checkbox__label">Simultaneous events</span>
+                </label>
+                <table id="simultaneous-events-table" class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                  <thead>
+                    <tr>
+                      <th class="mdl-data-table__cell--non-numeric">Main event</th>
+                      <th class="mdl-data-table__cell--non-numeric">Side event</th>
+                      <th class="mdl-data-table__cell--non-numeric"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr id="simultaneous-events-form">
+                      <td class="mdl-data-table__cell--non-numeric">
+                        <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label event-selectfield">
+                          <select id="main-event" class="mdl-selectfield__select"></select>
+                        </div>
+                      </td>
+                      <td class="mdl-data-table__cell--non-numeric">
+                        <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label event-selectfield">
+                          <select id="side-event" class="mdl-selectfield__select"></select>
+                        </div>
+                      </td>
+                      <td class="mdl-data-table__cell--non-numeric">
+                        <button type="button" class="mdl-button mdl-js-button mdl-button--primary mdl-button--icon" id="add-simultaneous-events">
+                          <i class="material-icons">add</i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="actions">
+                <button type="button" class="mdl-button mdl-js-button mdl-button--raised" id="generate" disabled>Generate</button>
+              </div>
+            </form>
           </div>
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="competition-name-input" pattern=".+">
-            <label class="mdl-textfield__label" for="compettion-name-input">Competition name</label>
-            <span class="mdl-textfield__error">must be present</span>
+          <div class="mdl-layout-spacer"></div>
+        </div>
+        <footer class="mdl-mini-footer app-footer">
+          <div class="mdl-mini-footer__left-section">
+            <ul class="mdl-mini-footer__link-list">
+              <li>
+                Made with <i class="material-icons">favorite</i>
+                by <a href="https://github.com/jonatanklosko" target="_blank">Jonatan Kłosko</a>
+              </li>
+            </ul>
           </div>
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="stations-input" pattern="\d*">
-            <label class="mdl-textfield__label" for="stations-input">Stations count</label>
-            <span class="mdl-textfield__error">must be a natural number</span>
+          <div class="mdl-mini-footer__right-section">
+            <ul class="mdl-mini-footer__link-list">
+              <li>
+                <a href="https://github.com/jonatanklosko/groupifier" target="_blank">
+                  <img src="https://png.icons8.com/ios-glyphs/28/9e9e9e/github.png" alt="GitHub">
+                </a>
+              </li>
+              <li>
+                <a href="mailto:jonatanklosko@gmail.com" target="_blank">
+                  <i class="material-icons">email</i>
+                </a>
+              </li>
+            </ul>
           </div>
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="scramblers-input" pattern="\d*">
-            <label class="mdl-textfield__label" for="scramblers-input">Scramblers count</label>
-            <span class="mdl-textfield__error">must be a natural number</span>
-          </div>
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="staff-judges-input" pattern="\d*">
-            <label class="mdl-textfield__label" for="staff-judges-input">Staff judges count</label>
-            <span class="mdl-textfield__error">must be a natural number</span>
-          </div>
-          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="sort-by-results-input">
-            <input class="mdl-checkbox__input" type="checkbox" id="sort-by-results-input" checked>
-            <span class="mdl-checkbox__label">Sort competitors by their results</span>
-          </label>
-          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="ask-for-scramblers-input">
-            <input class="mdl-checkbox__input" type="checkbox" id="ask-for-scramblers-input">
-            <span class="mdl-checkbox__label">Ask me to select scramblers manually</span>
-          </label>
-          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="skip-newcomers-input">
-            <input class="mdl-checkbox__input" type="checkbox" id="skip-newcomers-input" checked>
-            <span class="mdl-checkbox__label">Skip newcomers during tasks assignment</span>
-          </label>
-          <div>
-            <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="simultaneous-events-label">
-              Creates separate groups for people starting in side events that are being held at the same time.
-              <br>E.g. use it to make all FMC participants start in the first group of 3x3x3 Cube,
-              so that all of them can do a FMC attempt afterwards.
-              <br>Important: select event pairs only for <strong>first rounds</strong> of the main events.
-              Don't specify events if you don't want to have such separate groups,
-              e.g. in case people are given the whole day to do their MBLD attemps.
-            </div>
-            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" id="simultaneous-events-label" for="simultaneous-events-input">
-              <input class="mdl-checkbox__input" type="checkbox" id="simultaneous-events-input">
-              <span class="mdl-checkbox__label">Simultaneous events</span>
-            </label>
-            <table id="simultaneous-events-table" class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-              <thead>
-                <tr>
-                  <th class="mdl-data-table__cell--non-numeric">Main event</th>
-                  <th class="mdl-data-table__cell--non-numeric">Side event</th>
-                  <th class="mdl-data-table__cell--non-numeric"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr id="simultaneous-events-form">
-                  <td class="mdl-data-table__cell--non-numeric">
-                    <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label event-selectfield">
-                      <select id="main-event" class="mdl-selectfield__select"></select>
-                    </div>
-                  </td>
-                  <td class="mdl-data-table__cell--non-numeric">
-                    <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label event-selectfield">
-                      <select id="side-event" class="mdl-selectfield__select"></select>
-                    </div>
-                  </td>
-                  <td class="mdl-data-table__cell--non-numeric">
-                    <button type="button" class="mdl-button mdl-js-button mdl-button--primary mdl-button--icon" id="add-simultaneous-events">
-                      <i class="material-icons">add</i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="actions">
-            <button type="button" class="mdl-button mdl-js-button mdl-button--raised" id="generate" disabled>Generate</button>
-          </div>
-        </form>
-      </div>
-      <div class="mdl-layout-spacer"></div>
+        </footer>
+      </main>
     </div>
 
     <dialog class="mdl-dialog scramblers-dialog">
@@ -127,5 +217,5 @@
         <button type="button" class="mdl-button close" disabled>Ready</button>
       </div>
     </dialog>
-  <script type="text/javascript" src="main.d49451a240b0e9a7ba05.js"></script></body>
+  <script type="text/javascript" src="main.befb12838894f4aea3e0.js"></script></body>
 </html>
