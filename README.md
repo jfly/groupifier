@@ -1,11 +1,12 @@
 # Groupifier
 
-A simple tool automatically splitting participants into groups for a WCA competition.
-Generates personal cards with groups and tasks assigned as well as a summary PDF.
+Check out [the website](https://jonatanklosko.github.io/groupifier)
+to see the purpose of this tool.
 
 ### Development
 
 ```bash
-yarn install
-yarn run wdserver # Run webpack-dev-server
+git clone https://github.com/jonatanklosko/groupifier.git && cd groupifier
+npm install
+npm run wdserver # Run webpack-dev-server
 ```
