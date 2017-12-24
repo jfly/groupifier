@@ -76,7 +76,8 @@ export function assignScrambling(eventsWithData, scramblersCount, askForScramble
         };
       });
     })
-    .reduce((promise, fn) => promise.then(fn), Promise.resolve());
+    .reduce((promise, fn) => promise.then(fn), Promise.resolve())
+    .then(() => new Promise(resolve => window.requestAnimationFrame(resolve))); /* Make sure the last scramblers dialog is hidden from the screen before continuing. */
 }
 
 export function assignJudging(allPeople, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers) {

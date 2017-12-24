@@ -11,11 +11,6 @@ const selectedScramblersCountSpan = dialog.getElementsByClassName('selected-scra
 
 dialogPolyfill.registerDialog(dialog);
 
-readyButton.addEventListener('click', () => {
-  dialog.close();
-  readyButton.disabled = true;
-});
-
 export function selectScramblers(people, requiredCount, eventId, groupId) {
   const eventObject = _.find(eventObjects, ['id', eventId]);
   const scramblers = [];
@@ -55,9 +50,21 @@ export function selectScramblers(people, requiredCount, eventId, groupId) {
   });
 
   return new Promise((resolve, reject) => {
-    const handler = readyButton.addEventListener('click', event => {
-      readyButton.removeEventListener('click', handler);
+    const closeHandler = () => {
+      removeHandlers();
+      reject();
+    };
+    const handler = () => {
+      removeHandlers();
+      dialog.close();
+      readyButton.disabled = true;
       resolve(scramblers);
-    });
+    };
+    function removeHandlers() {
+      readyButton.removeEventListener('click', handler);
+      dialog.removeEventListener('close', closeHandler);
+    }
+    dialog.addEventListener('close', closeHandler);
+    readyButton.addEventListener('click', handler);
   });
 }

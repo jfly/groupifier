@@ -4,6 +4,7 @@ import 'material-design-lite/material.js';
 import 'mdl-selectfield/dist/mdl-selectfield.css';
 import 'mdl-selectfield/dist/mdl-selectfield.js';
 import '../assets/main.css';
+import 'spinkit/css/spinners/11-folding-cube.css';
 
 import { parse as parseCSV } from 'papaparse';
 import _ from 'lodash';
@@ -53,7 +54,12 @@ function updateButtonState() {
   button.disabled = !_.flatMap(controlsByEvent).every(control => control.value && control.validity.valid);
 }
 
+function loadingScreen(shown) {
+  document.body.classList.toggle('loading', shown);
+}
+
 button.addEventListener('click', () => {
+  loadingScreen(true);
   const competitionId = competitionIdSelect.value;
   const stationsCount = parseInt(stationsInput.value);
   const scramblersCount = parseInt(scramblersInput.value);
@@ -68,13 +74,16 @@ button.addEventListener('click', () => {
       const people = peopleFromCsvRows(rows);
       Promise.all([getCompetitionWcif(competitionIdSelect.value), attachWcaDataToPeople(people)]).then(([wcif]) => {
         const eventsWithData = assignGroups(people, stationsCount, sortByResults, sideEventsByMainEvents());
-        assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers).then(() => {
+        return assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers).then(() => {
           assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers);
-          createPersonalCardsPdf(people).open();
-          createSummaryPdf(eventsWithData).open();
-          createScorecardsPdf(eventsWithData, wcif).open();
+          return Promise.all([
+            new Promise(resolve => createPersonalCardsPdf(people).download('personal-cards.pdf', resolve)),
+            new Promise(resolve => createSummaryPdf(eventsWithData).download('summary.pdf', resolve)),
+            new Promise(resolve => createScorecardsPdf(eventsWithData, wcif).download('scorecards.pdf', resolve))
+          ]);
         });
-      });
+      })
+      .then(() => loadingScreen(false), () => loadingScreen(false));
     }
   });
 });

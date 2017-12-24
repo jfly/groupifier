@@ -62,3 +62,22 @@ body.user-signed-in [data-user-signed-out] {
 label[for="simultaneous-events-input"]:not(.is-checked) + #simultaneous-events-table {
   display: none;
 }
+
+/* Make the footer appear at the very bottom of the screen even if the main element is empty. */
+main {
+  flex-shrink: 0;
+}
+
+.loading-screen {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+body.loading main {
+  display: none;
+}
+
+body:not(.loading) .loading-screen {
+  display: none;
+}
