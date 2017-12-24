@@ -11767,6 +11767,8 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
 /* Roboto font */
 /* Material icons */
 
+/* General */
+
 html, body {
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
@@ -11775,36 +11777,40 @@ a {
   text-decoration: none;
 }
 
-.app-footer {
-  padding-top: 16px;
-  padding-bottom: 16px;
+header .app-icon {
+  font-size: 32px;
 }
 
-.app-footer .material-icons {
-  vertical-align: middle;
+/* Make the footer appear at the very bottom of the screen even if the main element is empty. */
+main {
+  flex-shrink: 0;
 }
+
+/* Form */
 
 .hidden-file-input {
   display: none;
 }
 
-.app-icon {
-  font-size: 32px;
+.event-selectfield {
+  width: auto;
+  padding: 0;
 }
 
-/* Modifiers conditionally displaying content depending on whether the user is signed in or not. */
-
-body:not(.user-signed-in) [data-user-signed-in] {
-  display: none;
+.event-selectfield, .event-selectfield * {
+  font-size: inherit;
 }
 
-body.user-signed-in [data-user-signed-out] {
+/* Show the simultaneous events table if the checkbox is checked. */
+label[for="simultaneous-events-input"]:not(.is-checked) + #simultaneous-events-table {
   display: none;
 }
 
 .actions {
   padding-top: 20px;
 }
+
+/* Dialog */
 
 .scramblers-dialog {
   width: 400px;
@@ -11815,22 +11821,7 @@ body.user-signed-in [data-user-signed-out] {
   height: 300px;
 }
 
-.event-selectfield {
-  width: auto;
-  padding: 0;
-}
-.event-selectfield, .event-selectfield * {
-  font-size: inherit;
-}
-
-label[for="simultaneous-events-input"]:not(.is-checked) + #simultaneous-events-table {
-  display: none;
-}
-
-/* Make the footer appear at the very bottom of the screen even if the main element is empty. */
-main {
-  flex-shrink: 0;
-}
+/* Loading screen */
 
 .loading-screen {
   flex-grow: 1;
@@ -11838,11 +11829,32 @@ main {
   align-items: center;
 }
 
+/* Footer */
+
+.app-footer {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.app-footer .material-icons {
+  vertical-align: middle;
+}
+
+/* Modifiers conditionally displaying content depending on the application state (indicated by the body class). */
+
+body:not(.user-signed-in) [data-user-signed-in] {
+  display: none;
+}
+
+body.user-signed-in [data-user-signed-out] {
+  display: none;
+}
+
 body.loading main {
   display: none;
 }
 
-body:not(.loading) .loading-screen {
+body:not(.loading) [data-loading] {
   display: none;
 }
 /*
