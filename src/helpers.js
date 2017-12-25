@@ -2,6 +2,9 @@ import _ from 'lodash';
 
 import { eventObjects } from './events';
 
+export const $ = document.querySelector.bind(document);
+export const $all = document.querySelectorAll.bind(document);
+
 export function cutoffToString(cutoff, eventId) {
   if (eventId === '333mbf') {
     return `${cutoff.attemptResult} points`;

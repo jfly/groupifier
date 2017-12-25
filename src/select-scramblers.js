@@ -1,20 +1,19 @@
 import dialogPolyfill from 'dialog-polyfill';
 import _ from 'lodash';
 
+import { $ } from './helpers';
 import { eventObjects } from './events';
 
-const dialog = document.getElementsByTagName('dialog')[0];
-const readyButton = dialog.getElementsByTagName('button')[0];
-const eventWithGroupHeader = dialog.getElementsByClassName('event-with-group')[0];
-const list = dialog.getElementsByTagName('ul')[0];
-const selectedScramblersCountSpan = dialog.getElementsByClassName('selected-scramblers-count')[0];
+const dialog = $('dialog');
+const readyButton = dialog.querySelector('button');
+const list = dialog.querySelector('ul');
 
 dialogPolyfill.registerDialog(dialog);
 
 export function selectScramblers(people, requiredCount, eventId, groupId) {
   const eventObject = _.find(eventObjects, ['id', eventId]);
   const scramblers = [];
-  const updateSelectedCount = () => selectedScramblersCountSpan.innerText = scramblers.length;
+  const updateSelectedCount = () => $('.selected-scramblers-count').innerText = scramblers.length;
   updateSelectedCount();
   /* Remove current list items. */
   while(list.lastChild) {
@@ -23,7 +22,7 @@ export function selectScramblers(people, requiredCount, eventId, groupId) {
   if(!dialog.open) {
     dialog.showModal();
   }
-  eventWithGroupHeader.innerText = `${eventObject.name} - Group ${groupId}`;
+  $('.event-with-group').innerText = `${eventObject.name} - Group ${groupId}`;
   people.forEach(person => {
     list.insertAdjacentHTML('beforeend', `
       <li class="mdl-list__item">
