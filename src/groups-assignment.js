@@ -8,7 +8,6 @@ export function assignGroups(allPeople, stationsCount, sortByResults, sideEventB
     .map('id')
     .map(eventId => [eventId, _.filter(allPeople, { events: [eventId] })])
     .reject(([eventId, people]) => _.isEmpty(people))
-    .sortBy(([eventId, people]) => people.length) /* Sort so that events with a smaller amount of people able to help go first. */
     .map(([eventId, people]) => {
       if (sortByResults) {
         people = _.orderBy(people, [
@@ -52,6 +51,7 @@ function assignGroupsForEvent(eventId, people, stationsCount, minGroupsCount, nu
 export function assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers) {
   return _(eventsWithData)
     .reject(([eventId, data]) => selfsufficientEvents.includes(eventId))
+    .sortBy(([eventId, { people }]) => people.length) /* Sort so that events with a smaller amount of people able to scramble go first. */
     .flatMap(([eventId, { groups, people, peopleSolvingSideEvent }]) => {
       return groups.map((group, groupIndex) => {
         return () => {
@@ -60,8 +60,10 @@ export function assignScrambling(eventsWithData, scramblersCount, askForScramble
             person => skipNewcomers && person.wcaId === "",
             /* If possible, we avoid assigning a task to person solving in the next group. */
             person => _.get(groups, [groupIndex + 1, 'peopleSolving'], []).includes(person),
-            /* We avoid assigning scrambling in more than one group for the given event. */
-            person => _.size(person.scrambling[eventId]),
+            /* We avoid assigning scrambling in more than two groups for the given event. */
+            person => _.size(person.scrambling[eventId]) >= 2,
+            /* We avoid assigning scrambling in more than six groups in general. */
+            person => _.sum(_.map(person.scrambling, _.size)) >= 6,
             /* Sort scramblers by results. */
             person => _.get(person, `wcaData.personal_records.${eventId}.average.world_rank`),
             person => _.get(person, `wcaData.personal_records.${eventId}.single.world_rank`),
