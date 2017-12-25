@@ -15,36 +15,29 @@ import { assignGroups, assignScrambling, assignJudging } from './groups-assignme
 import { createPersonalCardsPdf, createSummaryPdf, createScorecardsPdf } from './pdf-creation';
 import { sideEventsByMainEvents } from './simultaneous-events';
 
-/* Show the selected file name within the appropriate input. */
-$('#file-input').addEventListener('change', event => {
-  const fileNameInput = $('#file-name-input');
-  fileNameInput.value = event.target.files[0].name;
-  fileNameInput.parentNode.MaterialTextfield.checkDirty();
-  fileNameInput.parentNode.MaterialTextfield.checkValidity();
-  updateButtonState();
-});
-
-const controlsByEvent = {
-  input: _.toArray($all('form input[type="text"]')),
-  change: [$('#competition-id-select')]
-};
-_.each(controlsByEvent, (controls, eventName) => {
-  controls.forEach(element => {
-    element.addEventListener(eventName, () => {
-      element.required = true; /* Setting this sooner results in validation messages shown on the page load. See: https://github.com/google/material-design-lite/issues/1502 */
-      updateButtonState();
-    });
+if (isSignedIn()) {
+  document.body.classList.add('user-signed-in');
+  getUpcomingManageableCompetitions().then(competitions => {
+    const competitionOptions = competitions.reverse().map(competition =>
+      `<option value="${competition.id}">${competition.short_name}</option>`
+    );
+    $('#competition-id-select').innerHTML = competitionOptions.join('\n');
+    $('#competition-id-select').dispatchEvent(new Event('change'))
   });
+}
+
+$('#sign-in-link').addEventListener('click', event => {
+  event.preventDefault();
+  signIn();
 });
 
-/* Enable/disable the button depending on the form validity. */
-function updateButtonState() {
-  $('#generate').disabled = !_.flatMap(controlsByEvent).every(control => control.value && control.validity.valid);
-}
+$('#sign-out-link').addEventListener('click', event => {
+  event.preventDefault();
+  signOut();
+  document.body.classList.remove('user-signed-in');
+});
 
-function loadingScreen(shown) {
-  document.body.classList.toggle('loading', shown);
-}
+const loadingScreen = shown => document.body.classList.toggle('loading', shown);
 
 $('#generate').addEventListener('click', () => {
   loadingScreen(true);
@@ -76,22 +69,32 @@ $('#generate').addEventListener('click', () => {
   });
 });
 
-$('#sign-in-link').addEventListener('click', event => {
-  event.preventDefault();
-  signIn();
-});
+/* Form initialization */
 
-$('#sign-out-link').addEventListener('click', event => {
-  event.preventDefault();
-  signOut();
-  document.body.classList.remove('user-signed-in');
-});
+const controlsByEvent = {
+  input: _.toArray($all('form input[type="text"]')),
+  change: [$('#competition-id-select')]
+};
 
-if (isSignedIn()) {
-  document.body.classList.add('user-signed-in');
-  getUpcomingManageableCompetitions().then(competitions => {
-    const competitionOptions = competitions.reverse().map(competition => `<option value="${competition.id}">${competition.short_name}</option>`);
-    $('#competition-id-select').innerHTML = competitionOptions.join('\n');
-    $('#competition-id-select').dispatchEvent(new Event('change'))
+/* Enable/disable the button depending on the form validity. */
+const updateButtonState = () => {
+  $('#generate').disabled = !_.flatMap(controlsByEvent).every(control => control.value && control.validity.valid);
+};
+
+_.each(controlsByEvent, (controls, eventName) => {
+  controls.forEach(element => {
+    element.addEventListener(eventName, () => {
+      element.required = true; /* Setting this sooner results in validation messages shown on the page load. See: https://github.com/google/material-design-lite/issues/1502 */
+      updateButtonState();
+    });
   });
-}
+});
+
+/* Show the selected filename within the corresponding text input. */
+$('#file-input').addEventListener('change', event => {
+  const fileNameInput = $('#file-name-input');
+  fileNameInput.value = event.target.files[0].name;
+  fileNameInput.parentNode.MaterialTextfield.checkDirty();
+  fileNameInput.parentNode.MaterialTextfield.checkValidity();
+  updateButtonState();
+});
