@@ -25,8 +25,10 @@ export function assignGroups(allPeople, stationsCount, sortByResults, sideEventB
         /* Put people solving simultaneous events in separate groups. */
         groups.push(...assignGroupsForEvent(eventId, peopleSolvingSideEvent, stationsCount, 1, n => `${sideEvent.shortName}${n > 1 ? '-' + n : '' }`));
       }
-      /* Force at least 2 groups unless this is a selfsufficient event. */
-      const minGroupsCount = (groups.length > 0 || selfsufficientEvents.includes(eventId)) ? 1 : 2;
+      /* Force at least 2 groups unless this is a selfsufficient event.
+         Note: we need at least 2 groups apart from those for people solving side events
+         in order to scramblers for each group. */
+      const minGroupsCount = selfsufficientEvents.includes(eventId) ? 1 : 2;
       groups.push(...assignGroupsForEvent(eventId, _.difference(people, peopleSolvingSideEvent), stationsCount, minGroupsCount, _.identity));
 
       return [eventId, { groups, people, peopleSolvingSideEvent }];
