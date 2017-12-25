@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { eventObjects, selfsufficientEvents } from './events';
-import { selectScramblers } from './select-scramblers';
+import { ScramblersDialog } from './scramblers-dialog';
 
 export function assignGroups(allPeople, stationsCount, sortByResults, sideEventByMainEvent) {
   return _(eventObjects)
@@ -51,6 +51,7 @@ function assignGroupsForEvent(eventId, people, stationsCount, minGroupsCount, nu
 }
 
 export function assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers) {
+  const scramblersDialog = askForScramblers && new ScramblersDialog();
   return _(eventsWithData)
     .reject(([eventId, data]) => selfsufficientEvents.includes(eventId))
     .sortBy(([eventId, { people }]) => people.length) /* Sort so that events with a smaller amount of people able to scramble go first. */
@@ -71,7 +72,7 @@ export function assignScrambling(eventsWithData, scramblersCount, askForScramble
             person => _.get(person, `wcaData.personal_records.${eventId}.single.world_rank`),
           ]);
           const scramblersPromise = askForScramblers
-                                  ? selectScramblers(potentialScramblers, scramblersCount, eventId, group.id)
+                                  ? scramblersDialog.getScramblers(potentialScramblers, scramblersCount, eventId, group.id)
                                   : Promise.resolve(_.take(potentialScramblers, scramblersCount));
           return scramblersPromise.then(scramblers => {
             group.peopleScrambling = scramblers;
@@ -81,7 +82,9 @@ export function assignScrambling(eventsWithData, scramblersCount, askForScramble
       });
     })
     .reduce((promise, fn) => promise.then(fn), Promise.resolve())
-    .then(() => new Promise(resolve => window.requestAnimationFrame(resolve))); /* Make sure the last scramblers dialog is hidden from the screen before continuing. */
+    .then(() => askForScramblers && scramblersDialog.close())
+    /* Make sure the scramblers dialog is hidden from the screen before continuing. */
+    .then(() => askForScramblers && new Promise(resolve => window.requestAnimationFrame(resolve)));
 }
 
 export function assignJudging(allPeople, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers) {

@@ -49,6 +49,7 @@ label[for="simultaneous-events-input"]:not(.is-checked) + #simultaneous-events-t
 /* Dialog */
 
 .scramblers-dialog {
+  max-width: 80%;
   width: 400px;
 }
 

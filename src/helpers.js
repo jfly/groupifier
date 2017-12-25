@@ -2,8 +2,19 @@ import _ from 'lodash';
 
 import { eventObjects } from './events';
 
+/* DOM elements */
+
 export const $ = document.querySelector.bind(document);
 export const $all = document.querySelectorAll.bind(document);
+
+export function addEventListenerOnce(element, eventName, callback) {
+  element.addEventListener(eventName, () => {
+    element.removeEventListener(eventName, callback);
+    callback();
+  });
+};
+
+/* WCA formatting */
 
 export function cutoffToString(cutoff, eventId) {
   if (eventId === '333mbf') {
