@@ -25,7 +25,7 @@ let config = {
   module: {
     rules: [{
       test: /\.js$/,
-      use: ['babel-loader?presets[]=es2015'],
+      use: ['babel-loader?presets[]=env'],
       exclude: /node_modules/
     }, {
       test: /\.css$/,

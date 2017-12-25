@@ -1,4 +1,3 @@
-
 import 'material-design-lite/material.css';
 import 'material-design-lite/material.js';
 import 'mdl-selectfield/dist/mdl-selectfield.css';
