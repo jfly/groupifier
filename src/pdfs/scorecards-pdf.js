@@ -16,7 +16,7 @@ export class ScorecardsPdf extends PdfDocument {
     const maxAttemptsCountByFormat = { '1': 1, '2': 2, '3': 3, 'm': 3, 'a': 5 };
     const scorecards = _.flatMap(events, eventObject => {
       let scorecardNumber = _.fromPairs(eventsWithData)[eventObject.id].people.length;
-      const wcifEvent = _.find(wcif.events, { id: eventObject.id });
+      const wcifEvent = _.find(wcif.events, { id: eventObject.id }) || {};
       const firstRound = _.get(wcifEvent.rounds, '0', {});
       const { cutoff, timeLimit } = firstRound;
       const maxAttemptsCount = maxAttemptsCountByFormat[firstRound.format];
@@ -28,26 +28,14 @@ export class ScorecardsPdf extends PdfDocument {
         return scorecardsOnLastPage === 0 ? groupScorecards : groupScorecards.concat(_.times(4 - scorecardsOnLastPage, _.constant({})));
       });
     });
+    const dashedLine = properties =>
+      _.assign({ type: 'line', lineWidth: 0.1, dash: { length: 10 }, lineColor: '#888888' }, properties);
     this.definition = {
       background: [
         {
           canvas: [
-            {
-              type: 'line',
-              x1: scorecardMargin, y1: pageHeight / 2,
-              x2: pageWidth - scorecardMargin, y2: pageHeight / 2,
-              lineWidth: 0.1,
-              dash: { length: 10 },
-              lineColor: '#888888'
-            },
-            {
-              type: 'line',
-              x1: pageWidth / 2, y1: scorecardMargin,
-              x2: pageWidth / 2, y2:  pageHeight - scorecardMargin,
-              lineWidth: 0.1,
-              dash: { length: 10 },
-              lineColor: '#888888'
-            },
+            dashedLine({ x1: scorecardMargin, y1: pageHeight / 2, x2: pageWidth - scorecardMargin, y2: pageHeight / 2 }),
+            dashedLine({ x1: pageWidth / 2, y1: scorecardMargin, x2: pageWidth / 2, y2:  pageHeight - scorecardMargin })
           ]
         },
       ],
