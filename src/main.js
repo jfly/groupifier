@@ -11,9 +11,9 @@ import { $, $all } from './helpers';
 import { signIn, signOut, isSignedIn, getUpcomingManageableCompetitions, getCompetitionWcif } from './wca-api';
 import { peopleFromCsvFile, peopleWithWcaData } from './people';
 import { assignGroups, assignScrambling, assignJudging } from './groups-assignment';
+import { ScorecardsPdf } from './pdfs/scorecards-pdf';
 import { PersonalCardsPdf } from './pdfs/personal-cards-pdf';
 import { SummaryPdf } from './pdfs/summary-pdf';
-import { ScorecardsPdf } from './pdfs/scorecards-pdf';
 import { sideEventsByMainEvents } from './simultaneous-events';
 
 if (isSignedIn()) {
@@ -60,9 +60,9 @@ $('#generate').addEventListener('click', () => {
       assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers);
       return Promise.all(
         _.invokeMap([
+          new ScorecardsPdf(eventsWithData, wcif),
           new PersonalCardsPdf(people),
-          new SummaryPdf(eventsWithData),
-          new ScorecardsPdf(eventsWithData, wcif)
+          new SummaryPdf(eventsWithData)
         ], 'download')
       );
     });
