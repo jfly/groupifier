@@ -69,6 +69,7 @@ label[for="simultaneous-events-input"]:not(.is-checked) + #simultaneous-events-t
 /* Footer */
 
 .app-footer {
+  flex: none; /* See https://stackoverflow.com/a/37446769 */
   padding-top: 16px;
   padding-bottom: 16px;
 }

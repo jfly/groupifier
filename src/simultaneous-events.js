@@ -30,6 +30,6 @@ $('#add-simultaneous-events').addEventListener('click', () => {
 });
 
 export function sideEventsByMainEvents() {
-  const simultaneousEventsRows = $('.simultaneous-events-pair');
+  const simultaneousEventsRows = $all('.simultaneous-events-pair');
   return _.fromPairs(_.map(simultaneousEventsRows, row => [row.dataset.mainEvent, row.dataset.sideEvent]));
 }
