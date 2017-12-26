@@ -65,7 +65,7 @@ export class ScorecardsPdf extends PdfDocument {
 
     return [
       { text: scorecardNumber, fontSize: 10 },
-      { text: competitionName, bold: true, fontSize: 16, margin: [0, 0, 0, 10], alignment: 'center' },
+      { text: competitionName, bold: true, fontSize: 15, margin: [0, 0, 0, 10], alignment: 'center' },
       {
         margin: [25, 0, 0, 0],
         table: {
