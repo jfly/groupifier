@@ -11,7 +11,9 @@ import { $, $all } from './helpers';
 import { signIn, signOut, isSignedIn, getUpcomingManageableCompetitions, getCompetitionWcif } from './wca-api';
 import { peopleFromCsvFile, peopleWithWcaData } from './people';
 import { assignGroups, assignScrambling, assignJudging } from './groups-assignment';
-import { createPersonalCardsPdf, createSummaryPdf, createScorecardsPdf } from './pdf-creation';
+import { PersonalCardsPdf } from './pdfs/personal-cards-pdf';
+import { SummaryPdf } from './pdfs/summary-pdf';
+import { ScorecardsPdf } from './pdfs/scorecards-pdf';
 import { sideEventsByMainEvents } from './simultaneous-events';
 
 if (isSignedIn()) {
@@ -56,11 +58,13 @@ $('#generate').addEventListener('click', () => {
     const eventsWithData = assignGroups(people, stationsCount, sortByResults, sideEventsByMainEvents());
     return assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers).then(() => {
       assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers);
-      return Promise.all([
-        new Promise(resolve => createPersonalCardsPdf(people).download('personal-cards.pdf', resolve)),
-        new Promise(resolve => createSummaryPdf(eventsWithData).download('summary.pdf', resolve)),
-        new Promise(resolve => createScorecardsPdf(eventsWithData, wcif).download('scorecards.pdf', resolve))
-      ]);
+      return Promise.all(
+        _.invokeMap([
+          new PersonalCardsPdf(people),
+          new SummaryPdf(eventsWithData),
+          new ScorecardsPdf(eventsWithData, wcif)
+        ], 'download')
+      );
     });
   })
   .then(() => loadingScreen(false), () => loadingScreen(false));
