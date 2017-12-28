@@ -22,7 +22,7 @@ export class ScorecardsPdf extends PdfDocument {
       const maxAttemptsCount = maxAttemptsCountByFormat[firstRound.format];
       return _.flatMap(groupsByEvent[eventObject.id], group => {
         const groupScorecards = _.map(group.peopleSolving, person =>
-          this.scorecard(scorecardNumber--, wcif.name, eventObject, group.id, person, maxAttemptsCount, cutoff, timeLimit)
+          this.scorecard(scorecardNumber--, wcif.shortName, eventObject, group.id, person, maxAttemptsCount, cutoff, timeLimit)
         );
         const scorecardsOnLastPage = groupScorecards.length % 4;
         return scorecardsOnLastPage === 0 ? groupScorecards : groupScorecards.concat(_.times(4 - scorecardsOnLastPage, _.constant({})));
