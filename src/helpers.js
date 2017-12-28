@@ -18,7 +18,7 @@ export function addEventListenerOnce(element, eventName, callback) {
 
 export function cutoffToString(cutoff, eventId) {
   if (eventId === '333mbf') {
-    return `${cutoff.attemptResult} points`;
+    return `${multibldAttemptResultToPoints(cutoff.attemptResult)} points`;
   } else if (eventId === '333fm') {
     return `${cutoff.attemptResult} moves`;
   } else {
@@ -41,6 +41,10 @@ export function timeLimitToString(timeLimit) {
       );
       return `${clockFormat} total for ${rounds.join(', ')}`;
   }
+}
+
+function multibldAttemptResultToPoints(attemptResult) {
+  return 99 - (Math.floor(attemptResult / 10000000) % 100);
 }
 
 function centisecondsToClockFormat(centiseconds) {
