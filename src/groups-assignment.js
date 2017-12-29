@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { eventObjects, selfsufficientEvents } from './events';
-import { ScramblersDialog } from './scramblers-dialog';
+import { ScramblersDialog } from './dialogs/scramblers-dialog';
 
 export function assignGroups(allPeople, stationsCount, sortByResults, sideEventByMainEvent) {
   return _(eventObjects)

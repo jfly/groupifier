@@ -15,6 +15,7 @@ import { ScorecardsPdf } from './pdfs/scorecards-pdf';
 import { PersonalCardsPdf } from './pdfs/personal-cards-pdf';
 import { SummaryPdf } from './pdfs/summary-pdf';
 import { sideEventsByMainEvents } from './simultaneous-events';
+import { ErrorDialog } from './dialogs/error-dialog';
 
 if (isSignedIn()) {
   document.body.classList.add('user-signed-in');
@@ -51,7 +52,9 @@ $('#generate').addEventListener('click', () => {
   const askForScramblers = $('#ask-for-scramblers-input').checked;
   const skipNewcomers = $('#skip-newcomers-input').checked;
   Promise.all([
-    peopleFromCsvFile(registrationsFile).then(peopleWithWcaData),
+    peopleFromCsvFile(registrationsFile)
+      .catch(() => new ErrorDialog().showError('Failed to parse the given CSV file.'))
+      .then(peopleWithWcaData),
     getCompetitionWcif(competitionId)
   ])
   .then(([people, wcif]) => {
@@ -65,9 +68,11 @@ $('#generate').addEventListener('click', () => {
           new SummaryPdf(eventsWithData)
         ], 'download')
       );
-    });
+    })
+    .catch(() => {});
   })
-  .then(() => loadingScreen(false), () => loadingScreen(false));
+  .catch(() => new ErrorDialog().showError('Failed to fetch data from the WCA website.'))
+  .then(() => loadingScreen(false));
 });
 
 /* Form initialization */

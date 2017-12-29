@@ -1,13 +1,13 @@
-import dialogPolyfill from 'dialog-polyfill';
 import _ from 'lodash';
 
-import { addEventListenerOnce } from './helpers';
-import { eventObjects } from './events';
+import { Dialog } from './dialog';
+import { addEventListenerOnce } from '../helpers';
+import { eventObjects } from '../events';
 
-export class ScramblersDialog {
+export class ScramblersDialog extends Dialog {
   constructor() {
-    this.dialog = document.createElement('dialog');
-    this.dialog.className = 'mdl-dialog scramblers-dialog';
+    super();
+    this.dialog.classList.add('scramblers-dialog');
     this.dialog.innerHTML = `
       <h4 class="mdl-dialog__title">
         <span>Scramblers</span>
@@ -26,9 +26,6 @@ export class ScramblersDialog {
         <button type="button" class="mdl-button close" disabled>Ready</button>
       </div>
     `;
-    this.dialog.addEventListener('close', () => this.dialog.remove());
-    document.body.appendChild(this.dialog);
-    dialogPolyfill.registerDialog(this.dialog);
     this.scramblersList = this.dialog.querySelector('ul.scramblers-list');
     this.readyButton = this.dialog.querySelector('button.close');
   }
@@ -69,22 +66,5 @@ export class ScramblersDialog {
       this.dialog.addEventListener('close', reject);
       addEventListenerOnce(this.readyButton, 'click', () => resolve(scramblers));
     });
-  }
-
-  close() {
-    return new Promise(resolve => {
-      if (this.dialog.open) {
-        this.dialog.addEventListener('close', resolve);
-        this.dialog.close();
-      } else {
-        resolve();
-      }
-    });
-  }
-
-  show() {
-    if (!this.dialog.open) {
-      this.dialog.showModal();
-    }
   }
 }
