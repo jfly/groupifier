@@ -40,6 +40,10 @@ export function getCompetitionWcif(competitionId) {
   return wcaApiFetch(`/competitions/${competitionId}/wcif`);
 }
 
+export function saveCompetitionEventsWcif(wcif) {
+  return wcaApiFetch(`/competitions/${wcif.id}/wcif/events`, { method: 'PATCH', body: JSON.stringify(wcif.events) });
+}
+
 function saveAccessTokenFromHash() {
   const hash = _.trimStart(window.location.hash, '#');
   const hashParams = new URLSearchParams(hash);

@@ -71,12 +71,20 @@
                   Fetches cutoffs and time limits from the WCA website and puts them on scorecards.
                 </span>
               </li>
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  <i class="material-icons mdl-list__item-icon">check</i>
+                  Optionally sets the number of scramble groups for each round based on advancement conditions
+                  and saves that to the WCA website, so there is no need for entering them manually.
+                </span>
+              </li>
             </ul>
           </div>
           <!-- The actual application content. -->
           <div class="mdl-cell mdl-cell--4-col" data-user-signed-in>
             <p>
-              Make sure to enter events data (cutoffs, time limits) for the given competition on the WCA website first.
+              Make sure to enter events data (cutoffs, time limits, advancement conditions)
+              for the given competition on the WCA website first.
               Once this is done select the competition and a CSV file with registrations,
               then specify configuration options.
             </p>
@@ -123,6 +131,14 @@
               <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" id="sort-by-results-label" for="sort-by-results-input">
                 <input class="mdl-checkbox__input" type="checkbox" id="sort-by-results-input" checked>
                 <span class="mdl-checkbox__label">Sort competitors by their results</span>
+              </label>
+              <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="set-scramble-groups-count-label">
+                Sets the number of scramble groups for each round and saves that to the WCA website,
+                so there is no need for entering them manually.
+              </div>
+              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" id="set-scramble-groups-count-label" for="set-scramble-groups-count-input">
+                <input class="mdl-checkbox__input" type="checkbox" id="set-scramble-groups-count-input" checked>
+                <span class="mdl-checkbox__label">Set scramble groups count on the WCA website</span>
               </label>
               <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="skip-newcomers-label">
                 Prevents from assigning tasks (scrambling, judging) to first-time competitors as long as this is possible.

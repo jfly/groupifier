@@ -123,6 +123,38 @@ export function assignJudging(allPeople, eventsWithData, stationsCount, staffJud
     });
 }
 
+export function setWcifScrambleGroupsCount(wcif, eventsWithData, stationsCount) {
+  _(eventsWithData)
+    .each(([eventId, { groups, people }]) => {
+      const wcifEvent = _.find(wcif.events, { id: eventId });
+      const [firstWcifRound, ...nextWcifRounds] = wcifEvent.rounds;
+      firstWcifRound.scrambleGroupCount = groups.length;
+      _.reduce(nextWcifRounds, ([wcifRound, competitorsCount], nextWcifRound) => {
+        const wcifAdvancementCondition = wcifRound.advancementCondition;
+        let nextRoundCompetitorsCount;
+        switch (wcifAdvancementCondition.type) {
+          case 'ranking':
+            nextRoundCompetitorsCount = wcifAdvancementCondition.level;
+            break;
+          case 'percent':
+            nextRoundCompetitorsCount = Math.floor(competitorsCount * wcifAdvancementCondition.level * 0.01);
+            break;
+          case 'attemptResult':
+            /* Assume that people having personal best better than the advancement condition will make it to the next round. */
+            nextRoundCompetitorsCount = _(people)
+              .map(person => _.get(person, `wcaData.personal_records.${eventId}.single.best`, Infinity))
+              .filter(best => best < wcifAdvancementCondition.level)
+              .size();
+            break;
+          default:
+            throw new Error(`Unrecognised AdvancementCondition type: '${wcifAdvancementCondition.type}'`);
+        }
+        nextWcifRound.scrambleGroupCount = calculateGroupsCount(eventId, nextRoundCompetitorsCount, stationsCount, 1);
+        return [nextWcifRound, nextRoundCompetitorsCount];
+      }, [firstWcifRound, people.length]);
+    });
+}
+
 function calculateGroupsCount(eventId, peopleCount, stationsCount, minGroupsCount) {
   if(selfsufficientEvents.includes(eventId)) {
     return 1;

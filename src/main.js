@@ -10,9 +10,9 @@ import _ from 'lodash';
 import { $, $all } from './helpers';
 import { catchErrors } from './errors';
 import { ErrorDialog } from './dialogs/error-dialog';
-import { signIn, signOut, isSignedIn, getUpcomingManageableCompetitions, getCompetitionWcif } from './wca-api';
+import { signIn, signOut, isSignedIn, getUpcomingManageableCompetitions, getCompetitionWcif, saveCompetitionEventsWcif } from './wca-api';
 import { peopleFromCsvFile, peopleWithWcaData } from './people';
-import { assignGroups, assignScrambling, assignJudging } from './groups-assignment';
+import { assignGroups, assignScrambling, assignJudging, setWcifScrambleGroupsCount } from './groups-assignment';
 import { ScorecardsPdf } from './pdfs/scorecards-pdf';
 import { PersonalCardsPdf } from './pdfs/personal-cards-pdf';
 import { SummaryPdf } from './pdfs/summary-pdf';
@@ -58,6 +58,7 @@ $('#generate').addEventListener('click', () => {
   const stationsCount = parseInt($('#stations-input').value);
   const scramblersCount = parseInt($('#scramblers-input').value);
   const staffJudgesCount = parseInt($('#staff-judges-input').value);
+  const setScrambleGroupsCount = $('#set-scramble-groups-count-input').checked;
   const sortByResults = $('#sort-by-results-input').checked;
   const askForScramblers = $('#ask-for-scramblers-input').checked;
   const skipNewcomers = $('#skip-newcomers-input').checked;
@@ -69,13 +70,15 @@ $('#generate').addEventListener('click', () => {
     const eventsWithData = assignGroups(people, stationsCount, sortByResults, sideEventsByMainEvents());
     return assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers).then(() => {
       assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers);
-      return Promise.all(
-        _.invokeMap([
+      setScrambleGroupsCount && setWcifScrambleGroupsCount(wcif, eventsWithData, stationsCount);
+      return Promise.all([
+        setScrambleGroupsCount && saveCompetitionEventsWcif(wcif),
+        ..._.invokeMap([
           new ScorecardsPdf(eventsWithData, wcif),
           new PersonalCardsPdf(people),
           new SummaryPdf(eventsWithData)
         ], 'download')
-      );
+      ]);
     });
   })
   .catch(errorHandlers)
