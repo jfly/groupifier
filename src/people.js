@@ -1,8 +1,11 @@
 import { parse as parseCSV } from 'papaparse';
 import _ from 'lodash';
 
+import { ApplicationError } from './errors';
 import { eventObjects } from './events';
 import { getPeopleData } from './wca-api';
+
+class CsvParsingError extends ApplicationError {}
 
 export function peopleFromCsvFile(file) {
   return new Promise((resolve, reject) => {
@@ -10,7 +13,7 @@ export function peopleFromCsvFile(file) {
       header: true,
       skipEmptyLines: true,
       complete: ({ data: rows, errors }) => {
-        _.isEmpty(errors) || reject(errors);
+        _.isEmpty(errors) || reject(new CsvParsingError(errors));
         resolve(
           rows.map((row, index) => ({
             id: index + 1,

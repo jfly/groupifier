@@ -1,7 +1,11 @@
 import _ from 'lodash';
 
+import { ApplicationError } from './errors';
+
 const wcaOrigin = WCA_ORIGIN_URL;
 const wcaOAuthClientId = WCA_OAUTH_CLIENT_ID;
+
+class WcaApiError extends ApplicationError {}
 
 saveAccessTokenFromHash();
 let wcaAccessToken = localStorage.getItem('Groupifier.accessToken');
@@ -22,20 +26,18 @@ export function isSignedIn() {
 
 export function getUpcomingManageableCompetitions() {
   const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-  return wcaApiFetch(`/competitions?managed_by_me=true&start=${oneWeekAgo.toISOString()}`)
-    .then(response => response.json());
+  return wcaApiFetch(`/competitions?managed_by_me=true&start=${oneWeekAgo.toISOString()}`);
 }
 
 export function getPeopleData(allWcaIds) {
   const promises = _.map(_.chunk(allWcaIds, 100), wcaIds =>
     wcaApiFetch(`/persons?per_page=100&wca_ids=${wcaIds.join(',')}`)
-      .then(response => response.json())
   );
   return Promise.all(promises).then(_.flatten);
 }
 
 export function getCompetitionWcif(competitionId) {
-  return wcaApiFetch(`/competitions/${competitionId}/wcif`).then(response => response.json());
+  return wcaApiFetch(`/competitions/${competitionId}/wcif`);
 }
 
 function saveAccessTokenFromHash() {
@@ -55,5 +57,6 @@ function wcaApiFetch(path, fetchOptions) {
       'Authorization': `Bearer ${wcaAccessToken}`,
       'Content-Type': 'application/json'
     })
-  }));
+  }))
+  .then(response => response.ok ? response.json() : Promise.reject(new WcaApiError(response)))
 }

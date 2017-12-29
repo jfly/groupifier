@@ -8,6 +8,8 @@ import 'spinkit/css/spinners/11-folding-cube.css';
 import _ from 'lodash';
 
 import { $, $all } from './helpers';
+import { catchErrors } from './errors';
+import { ErrorDialog } from './dialogs/error-dialog';
 import { signIn, signOut, isSignedIn, getUpcomingManageableCompetitions, getCompetitionWcif } from './wca-api';
 import { peopleFromCsvFile, peopleWithWcaData } from './people';
 import { assignGroups, assignScrambling, assignJudging } from './groups-assignment';
@@ -15,17 +17,24 @@ import { ScorecardsPdf } from './pdfs/scorecards-pdf';
 import { PersonalCardsPdf } from './pdfs/personal-cards-pdf';
 import { SummaryPdf } from './pdfs/summary-pdf';
 import { sideEventsByMainEvents } from './simultaneous-events';
-import { ErrorDialog } from './dialogs/error-dialog';
+
+const errorHandlers = catchErrors({
+  CsvParsingError: () => new ErrorDialog().showError('Failed to parse the given CSV file.'),
+  WcaApiError: () => new ErrorDialog().showError('Failed to fetch data from the WCA website.'),
+  default: () => new ErrorDialog().showError('Something went wrong.')
+});
 
 if (isSignedIn()) {
   document.body.classList.add('user-signed-in');
-  getUpcomingManageableCompetitions().then(competitions => {
-    const competitionOptions = competitions.reverse().map(competition =>
-      `<option value="${competition.id}">${competition.short_name}</option>`
-    );
-    $('#competition-id-select').innerHTML = competitionOptions.join('\n');
-    $('#competition-id-select').dispatchEvent(new Event('change'))
-  });
+  getUpcomingManageableCompetitions()
+    .then(competitions => {
+      const competitionOptions = competitions.reverse().map(competition =>
+        `<option value="${competition.id}">${competition.short_name}</option>`
+      );
+      $('#competition-id-select').innerHTML = competitionOptions.join('\n');
+      $('#competition-id-select').dispatchEvent(new Event('change'))
+    })
+    .catch(errorHandlers);
 }
 
 $('#sign-in-link').addEventListener('click', event => {
@@ -52,9 +61,7 @@ $('#generate').addEventListener('click', () => {
   const askForScramblers = $('#ask-for-scramblers-input').checked;
   const skipNewcomers = $('#skip-newcomers-input').checked;
   Promise.all([
-    peopleFromCsvFile(registrationsFile)
-      .catch(() => new ErrorDialog().showError('Failed to parse the given CSV file.'))
-      .then(peopleWithWcaData),
+    peopleFromCsvFile(registrationsFile).then(peopleWithWcaData),
     getCompetitionWcif(competitionId)
   ])
   .then(([people, wcif]) => {
@@ -69,9 +76,9 @@ $('#generate').addEventListener('click', () => {
         ], 'download')
       );
     })
-    .catch(() => {});
+    .catch(_.noop); /* Scramblers dialog closed. */
   })
-  .catch(() => new ErrorDialog().showError('Failed to fetch data from the WCA website.'))
+  .catch(errorHandlers)
   .then(() => loadingScreen(false));
 });
 
