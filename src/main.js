@@ -21,6 +21,7 @@ import { sideEventsByMainEvents } from './simultaneous-events';
 const errorHandlers = catchErrors({
   CsvParsingError: () => new ErrorDialog().showError('Failed to parse the given CSV file.'),
   WcaApiError: () => new ErrorDialog().showError('Failed to fetch data from the WCA website.'),
+  AbortError: () => {},
   default: () => new ErrorDialog().showError('Something went wrong.')
 });
 
@@ -75,8 +76,7 @@ $('#generate').addEventListener('click', () => {
           new SummaryPdf(eventsWithData)
         ], 'download')
       );
-    })
-    .catch(_.noop); /* Scramblers dialog closed. */
+    });
   })
   .catch(errorHandlers)
   .then(() => loadingScreen(false));

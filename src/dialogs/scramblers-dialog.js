@@ -3,6 +3,9 @@ import _ from 'lodash';
 import { Dialog } from './dialog';
 import { addEventListenerOnce } from '../helpers';
 import { eventObjects } from '../events';
+import { ApplicationError } from '../errors';
+
+class AbortError extends ApplicationError {}
 
 export class ScramblersDialog extends Dialog {
   constructor() {
@@ -63,7 +66,7 @@ export class ScramblersDialog extends Dialog {
     this.show();
 
     return new Promise((resolve, reject) => {
-      this.dialog.addEventListener('close', reject);
+      this.dialog.addEventListener('close', () => reject(new AbortError()));
       addEventListenerOnce(this.readyButton, 'click', () => resolve(scramblers));
     });
   }
