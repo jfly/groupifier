@@ -49,7 +49,8 @@
               <li class="mdl-list__item">
                 <span class="mdl-list__item-primary-content">
                   <i class="material-icons mdl-list__item-icon">check</i>
-                  Unless told otherwise, sorts competitors by their official results, so that each subsequent group represents a better level.
+                  Sorts competitors by their official results, so that each subsequent group represents a better level.
+                  When told otherwise, minimizes the amount of people with the same name in each group.
                 </span>
               </li>
               <li class="mdl-list__item">
@@ -115,15 +116,25 @@
                 <label class="mdl-textfield__label" for="staff-judges-input">Staff judges count</label>
                 <span class="mdl-textfield__error">must be a natural number</span>
               </div>
-              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="sort-by-results-input">
+              <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="sort-by-results-label">
+                Sorts competitors by official rankings, so that each subsequent group represents a better level.
+                <br>When disabled, minimizes the amount of people with the same name in each group.
+              </div>
+              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" id="sort-by-results-label" for="sort-by-results-input">
                 <input class="mdl-checkbox__input" type="checkbox" id="sort-by-results-input" checked>
                 <span class="mdl-checkbox__label">Sort competitors by their results</span>
               </label>
-              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="skip-newcomers-input">
+              <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="skip-newcomers-label">
+                Prevents from assigning tasks (scrambling, judging) to first-time competitors as long as this is possible.
+              </div>
+              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" id="skip-newcomers-label" for="skip-newcomers-input">
                 <input class="mdl-checkbox__input" type="checkbox" id="skip-newcomers-input">
                 <span class="mdl-checkbox__label">Skip newcomers during task assignment</span>
               </label>
-              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="ask-for-scramblers-input">
+              <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="ask-for-scramblers-label">
+                Makes the application ask the user to select scramblers from a list for each round.
+              </div>
+              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" id="ask-for-scramblers-label" for="ask-for-scramblers-input">
                 <input class="mdl-checkbox__input" type="checkbox" id="ask-for-scramblers-input">
                 <span class="mdl-checkbox__label">Ask me to select scramblers manually</span>
               </label>
