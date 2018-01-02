@@ -7,7 +7,7 @@ export class PersonalCardsPdf extends PdfDocument {
   constructor(people) {
     super('personal-cards.pdf');
     const competitionEvents = _(people).map('events').flatten().uniq().value();
-    const personalCards = people.map(person => this.personalCard(competitionEvents, person));
+    const personalCards = _.sortBy(people, 'name').map(person => this.personalCard(competitionEvents, person));
     const personalCardsInLastRow = personalCards.length % 3;
     personalCardsInLastRow === 0 || personalCards.push(..._.times(3 - personalCardsInLastRow, _.constant({})));
     this.definition = {

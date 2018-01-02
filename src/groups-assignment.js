@@ -9,12 +9,6 @@ export function assignGroups(allPeople, stationsCount, sortByResults, sideEventB
     .map(eventId => [eventId, _.filter(allPeople, { events: [eventId] })])
     .reject(([eventId, people]) => _.isEmpty(people))
     .map(([eventId, people]) => {
-      if (sortByResults) {
-        people = _.orderBy(people, [
-          `wcaData.personal_records.${eventId}.average.world_rank`,
-          `wcaData.personal_records.${eventId}.single.world_rank`
-        ], ['desc', 'desc']);
-      }
       const groups = []
       /* The corresponding side event being held simultaneously. */
       const sideEventId = sideEventByMainEvent[eventId];
@@ -23,20 +17,39 @@ export function assignGroups(allPeople, stationsCount, sortByResults, sideEventB
         peopleSolvingSideEvent = people.filter(person => person.events.includes(sideEventId));
         const sideEvent = _.find(eventObjects, { id: sideEventId });
         /* Put people solving simultaneous events in separate groups. */
-        groups.push(...assignGroupsForEvent(eventId, peopleSolvingSideEvent, stationsCount, 1, n => `${sideEvent.shortName}${n > 1 ? '-' + n : '' }`));
+        groups.push(...assignGroupsForEvent(eventId, peopleSolvingSideEvent, sortByResults, stationsCount, 1, n => `${sideEvent.shortName}${n > 1 ? '-' + n : '' }`));
       }
       /* Force at least 2 groups unless this is a selfsufficient event.
          Note: we need at least 2 groups apart from those for people solving side events
          in order to scramblers for each group. */
       const minGroupsCount = selfsufficientEvents.includes(eventId) ? 1 : 2;
-      groups.push(...assignGroupsForEvent(eventId, _.difference(people, peopleSolvingSideEvent), stationsCount, minGroupsCount, _.identity));
+      groups.push(...assignGroupsForEvent(eventId, _.difference(people, peopleSolvingSideEvent), sortByResults, stationsCount, minGroupsCount, _.identity));
 
       return [eventId, { groups, people, peopleSolvingSideEvent }];
     })
     .value();
 }
 
-function assignGroupsForEvent(eventId, people, stationsCount, minGroupsCount, numberToId) {
+function assignGroupsForEvent(eventId, people, sortByResults, stationsCount, minGroupsCount, numberToId) {
+  if (sortByResults) {
+    people = _.orderBy(people, [
+      `wcaData.personal_records.${eventId}.average.world_rank`,
+      `wcaData.personal_records.${eventId}.single.world_rank`
+    ], ['desc', 'desc']);
+  } else {
+    /* When sorting by results is disabled we aim to minimie the amount of people
+       with the same name in the each group. This is achieved by sorting people,
+       in a way that between each pair of people with the same name there is as huge gap as possible. */
+    const peopleByName = _.groupBy(_.sortBy(people, 'name'), person => person.name.split(' ')[0]);
+    /* We take sets of people with the same name and sort them by quantity.
+       Starting with the smallest sets we keep adding people to a single set called `arrangedPeople`.
+       For each set of people of length N (having the same name), we split `arrangedPeople` into N chunks
+       and add one person to each of these chunks. Then we join the chunks back as the new `arrangedPeople` set. */
+    people = _.reduce(_.sortBy(_.values(peopleByName), 'length'), (arrangedPeople, peopleOfSameName) => {
+      const chunkSize = Math.ceil(arrangedPeople.length / peopleOfSameName.length);
+      return _.compact(_.flatten(_.zipWith(_.chunk(arrangedPeople, chunkSize), _.chunk(peopleOfSameName, 1), _.concat)));
+    });
+  }
   const groups = [];
   const groupsCount = calculateGroupsCount(eventId, people.length, stationsCount, minGroupsCount);
   _.range(1, groupsCount + 1).forEach(groupNumber => {
