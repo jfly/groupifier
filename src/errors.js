@@ -10,6 +10,6 @@ export function catchErrors(handlerByError) {
   return (error) => {
     console.error(error);
     const handler = handlerByError[error.type];
-    return handler ? handler() : defaultHandler();
+    return handler ? handler(error) : defaultHandler(error);
   };
 };
