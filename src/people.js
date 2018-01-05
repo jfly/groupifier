@@ -17,7 +17,7 @@ export function peopleFromCsvFile(file) {
         resolve(
           rows.map((row, index) => ({
             id: index + 1,
-            name: row['Name'].split(/\s+/).map(_.capitalize).join(' '),
+            name: row['Name'],
             wcaId: row['WCA ID'].toUpperCase(),
             events: _.map(eventObjects, 'id').filter(eventId => row[eventId] === '1'),
             solving: {},
