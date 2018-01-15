@@ -29,11 +29,14 @@ if (isSignedIn()) {
   document.body.classList.add('user-signed-in');
   getUpcomingManageableCompetitions()
     .then(competitions => {
-      const competitionOptions = competitions.reverse().map(competition =>
-        `<option value="${competition.id}">${competition.short_name}</option>`
-      );
-      $('#competition-id-select').innerHTML = competitionOptions.join('\n');
-      $('#competition-id-select').dispatchEvent(new Event('change'))
+      $('#competition-select').innerHTML = '';
+      competitions.reverse().forEach(competition => {
+        const option = document.createElement('option');
+        option.value = JSON.stringify(competition);
+        option.innerText = competition.short_name;
+        $('#competition-select').appendChild(option);
+      });
+      $('#competition-select').dispatchEvent(new Event('change'))
     })
     .catch(errorHandlers);
 }
@@ -53,23 +56,32 @@ const loadingScreen = shown => document.body.classList.toggle('loading', shown);
 
 $('#generate').addEventListener('click', () => {
   loadingScreen(true);
-  const competitionId = $('#competition-id-select').value;
+  const competitionJson = JSON.parse($('#competition-select').value);
   const registrationsFile = $('#file-input').files[0];
   const stationsCount = parseInt($('#stations-input').value);
   const scramblersCount = parseInt($('#scramblers-input').value);
   const staffJudgesCount = parseInt($('#staff-judges-input').value);
-  const setScrambleGroupsCount = $('#set-scramble-groups-count-input').checked;
   const sortByResults = $('#sort-by-results-input').checked;
-  const askForScramblers = $('#ask-for-scramblers-input').checked;
+  const setScrambleGroupsCount = $('#set-scramble-groups-count-input').checked;
+  const skipManagers = $('#skip-managers-input').checked;
   const skipNewcomers = $('#skip-newcomers-input').checked;
+  const askForScramblers = $('#ask-for-scramblers-input').checked;
+  /* People that shouldn't be assigned tasks. */
+  const wcaIdsToSkip = [];
+  skipNewcomers && wcaIdsToSkip.push("");
+  if (skipManagers) {
+    const competitionManagerWcaIds = _.map(_.concat(competitionJson.delegates, competitionJson.organizers), 'wca_id')
+    wcaIdsToSkip.push(..._.uniq(_.compact(competitionManagerWcaIds)));
+  }
+  /* Main logic. */
   Promise.all([
     peopleFromCsvFile(registrationsFile).then(peopleWithWcaData),
-    getCompetitionWcif(competitionId)
+    getCompetitionWcif(competitionJson.id)
   ])
   .then(([people, wcif]) => {
     const eventsWithData = assignGroups(people, stationsCount, sortByResults, sideEventsByMainEvents());
-    return assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers).then(() => {
-      assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers);
+    return assignScrambling(eventsWithData, scramblersCount, askForScramblers, wcaIdsToSkip).then(() => {
+      assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, wcaIdsToSkip);
       setScrambleGroupsCount && setWcifScrambleGroupsCount(wcif, eventsWithData, stationsCount);
       return Promise.all([
         setScrambleGroupsCount && saveCompetitionEventsWcif(wcif),
@@ -89,7 +101,7 @@ $('#generate').addEventListener('click', () => {
 
 const controlsByEvent = {
   input: _.toArray($all('form input[type="text"]')),
-  change: [$('#competition-id-select')]
+  change: [$('#competition-select')]
 };
 
 /* Enable/disable the button depending on the form validity. */

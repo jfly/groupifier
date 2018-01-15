@@ -63,7 +63,7 @@ function assignGroupsForEvent(eventId, people, sortByResults, stationsCount, min
   return groups;
 }
 
-export function assignScrambling(eventsWithData, scramblersCount, askForScramblers, skipNewcomers) {
+export function assignScrambling(eventsWithData, scramblersCount, askForScramblers, wcaIdsToSkip) {
   const scramblersDialog = askForScramblers && new ScramblersDialog();
   return _(eventsWithData)
     .reject(([eventId, data]) => selfsufficientEvents.includes(eventId))
@@ -72,8 +72,8 @@ export function assignScrambling(eventsWithData, scramblersCount, askForScramble
       return groups.map((group, groupIndex) => {
         return () => {
           const potentialScramblers = _.sortBy(_.difference(people, group.peopleSolving, peopleSolvingSideEvent), [
-            /* If skipNewcomers is false this doesn't have any effect, otherwise people with WCA ID go first. */
-            person => skipNewcomers && person.wcaId === "",
+            /* People that shouldn't be assigned tasks are moved to the very end. */
+            person => wcaIdsToSkip.includes(person.wcaId),
             /* If possible, we avoid assigning a task to person solving in the next group. */
             person => _.get(groups, [groupIndex + 1, 'peopleSolving'], []).includes(person),
             /* We avoid assigning scrambling in more than two groups for the given event. */
@@ -100,7 +100,7 @@ export function assignScrambling(eventsWithData, scramblersCount, askForScramble
     .then(() => askForScramblers && new Promise(resolve => window.requestAnimationFrame(resolve)));
 }
 
-export function assignJudging(allPeople, eventsWithData, stationsCount, staffJudgesCount, skipNewcomers) {
+export function assignJudging(allPeople, eventsWithData, stationsCount, staffJudgesCount, wcaIdsToSkip) {
   _(eventsWithData)
     .reject(([eventId, data]) => selfsufficientEvents.includes(eventId))
     .each(([eventId, { groups, people, peopleSolvingSideEvent }]) => {
@@ -109,8 +109,8 @@ export function assignJudging(allPeople, eventsWithData, stationsCount, staffJud
         const additionalJudgesCount = judgesCount - staffJudgesCount;
         if(additionalJudgesCount > 0) {
           const potentialJudges = _.sortBy(_.difference(allPeople, group.peopleSolving, group.peopleScrambling, peopleSolvingSideEvent), [
-            /* If skipNewcomers is false this doesn't have any effect, otherwise people with WCA ID go first. */
-            person => skipNewcomers && person.wcaId === "",
+            /* People that shouldn't be assigned tasks are moved to the very end. */
+            person => wcaIdsToSkip.includes(person.wcaId),
             /* If possible, we avoid assigning a task to person solving in the next group. */
             person => _.get(groups, [groupIndex + 1, 'peopleSolving'], []).includes(person),
             /* Equally distribute tasks. */
