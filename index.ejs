@@ -81,7 +81,7 @@
             </ul>
           </div>
           <!-- The actual application content. -->
-          <div class="mdl-cell mdl-cell--4-col" data-user-signed-in>
+          <div class="mdl-cell mdl-cell--6-col" data-user-signed-in>
             <p>
               Make sure to enter events data (cutoffs, time limits, advancement conditions)
               for the given competition on the WCA website first.
@@ -141,18 +141,26 @@
                 <span class="mdl-checkbox__label">Set scramble groups count on the WCA website</span>
               </label>
               <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="skip-managers-label">
-                Prevents from assigning tasks (scrambling, judging) to delegates and organizers as long as this is possible.
+                Prevents from assigning tasks (scrambling, judging) to delegates and organizers, as long as this is possible.
               </div>
               <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" id="skip-managers-label" for="skip-managers-input">
                 <input class="mdl-checkbox__input" type="checkbox" id="skip-managers-input" checked>
                 <span class="mdl-checkbox__label">Skip delegates and organizers during task assignment</span>
               </label>
               <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="skip-newcomers-label">
-                Prevents from assigning tasks (scrambling, judging) to first-time competitors as long as this is possible.
+                Prevents from assigning tasks (scrambling, judging) to first-time competitors, as long as this is possible.
               </div>
               <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" id="skip-newcomers-label" for="skip-newcomers-input">
                 <input class="mdl-checkbox__input" type="checkbox" id="skip-newcomers-input">
                 <span class="mdl-checkbox__label">Skip newcomers during task assignment</span>
+              </label>
+              <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="judge-own-events-only-label">
+                Prevents from assigning judging to people in events they haven't registered for, as long as this is possible.
+                <br>Note: this is likely to make the number of tasks per person inconsistent.
+              </div>
+              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" id="judge-own-events-only-label" for="judge-own-events-only-input">
+                <input class="mdl-checkbox__input" type="checkbox" id="judge-own-events-only-input">
+                <span class="mdl-checkbox__label">Assign judging to people only in events they registered for</span>
               </label>
               <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="ask-for-scramblers-label">
                 Makes the application ask the user to select scramblers from a list for each round.

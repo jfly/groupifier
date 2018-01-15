@@ -65,6 +65,7 @@ $('#generate').addEventListener('click', () => {
   const setScrambleGroupsCount = $('#set-scramble-groups-count-input').checked;
   const skipManagers = $('#skip-managers-input').checked;
   const skipNewcomers = $('#skip-newcomers-input').checked;
+  const judgeOwnEventsOnly = $('#judge-own-events-only-input').checked;
   const askForScramblers = $('#ask-for-scramblers-input').checked;
   /* People that shouldn't be assigned tasks. */
   const wcaIdsToSkip = [];
@@ -81,7 +82,7 @@ $('#generate').addEventListener('click', () => {
   .then(([people, wcif]) => {
     const eventsWithData = assignGroups(people, stationsCount, sortByResults, sideEventsByMainEvents());
     return assignScrambling(eventsWithData, scramblersCount, askForScramblers, wcaIdsToSkip).then(() => {
-      assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, wcaIdsToSkip);
+      assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, wcaIdsToSkip, judgeOwnEventsOnly);
       setScrambleGroupsCount && setWcifScrambleGroupsCount(wcif, eventsWithData, stationsCount);
       return Promise.all([
         setScrambleGroupsCount && saveCompetitionEventsWcif(wcif),

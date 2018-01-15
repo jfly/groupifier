@@ -100,21 +100,25 @@ export function assignScrambling(eventsWithData, scramblersCount, askForScramble
     .then(() => askForScramblers && new Promise(resolve => window.requestAnimationFrame(resolve)));
 }
 
-export function assignJudging(allPeople, eventsWithData, stationsCount, staffJudgesCount, wcaIdsToSkip) {
+export function assignJudging(allPeople, eventsWithData, stationsCount, staffJudgesCount, wcaIdsToSkip, judgeOwnEventsOnly) {
   _(eventsWithData)
     .reject(([eventId, data]) => selfsufficientEvents.includes(eventId))
     .each(([eventId, { groups, people, peopleSolvingSideEvent }]) => {
+      const peopleToChooseFrom = (judgeOwnEventsOnly ? people : allPeople);
       groups.forEach((group, groupIndex) => {
         const judgesCount = Math.min(stationsCount, group.peopleSolving.length);
         const additionalJudgesCount = judgesCount - staffJudgesCount;
         if(additionalJudgesCount > 0) {
-          const potentialJudges = _.sortBy(_.difference(allPeople, group.peopleSolving, group.peopleScrambling, peopleSolvingSideEvent), [
+          const potentialJudges = _.sortBy(_.difference(peopleToChooseFrom, group.peopleSolving, group.peopleScrambling, peopleSolvingSideEvent), [
             /* People that shouldn't be assigned tasks are moved to the very end. */
             person => wcaIdsToSkip.includes(person.wcaId),
             /* If possible, we avoid assigning a task to person solving in the next group. */
             person => _.get(groups, [groupIndex + 1, 'peopleSolving'], []).includes(person),
             /* Equally distribute tasks. */
             person => _.sum(_.map(person.scrambling, _.size)) + _.sum(_.map(person.judging, _.size)),
+            /* Prefer people that solve fewer events, to avoid overloading people solving more. */
+            /* Especially important when `judgeOwnEventsOnly` applies, it makes people able to judge fewer events to be assigned first. */
+            person => person.events.length
           ]);
           group.peopleJudging = _.take(potentialJudges, judgesCount);
           assignTask('judging', group.peopleJudging, eventId, group.id);
