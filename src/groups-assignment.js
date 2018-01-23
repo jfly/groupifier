@@ -104,12 +104,13 @@ export function assignJudging(allPeople, eventsWithData, stationsCount, staffJud
   _(eventsWithData)
     .reject(([eventId, data]) => selfsufficientEvents.includes(eventId))
     .each(([eventId, { groups, people, peopleSolvingSideEvent }]) => {
-      const peopleToChooseFrom = (judgeOwnEventsOnly ? people : allPeople);
       groups.forEach((group, groupIndex) => {
         const judgesCount = Math.min(stationsCount, group.peopleSolving.length);
         const additionalJudgesCount = judgesCount - staffJudgesCount;
         if(additionalJudgesCount > 0) {
-          const potentialJudges = _.sortBy(_.difference(peopleToChooseFrom, group.peopleSolving, group.peopleScrambling, peopleSolvingSideEvent), [
+          const potentialJudges = _.sortBy(_.difference(allPeople, group.peopleSolving, group.peopleScrambling, peopleSolvingSideEvent), [
+            /* If judgeOwnEventsOnly is enabled, people that haven't registered for this event are moved to the very end. */
+            person => judgeOwnEventsOnly && !people.includes(person),
             /* People that shouldn't be assigned tasks are moved to the very end. */
             person => wcaIdsToSkip.includes(person.wcaId),
             /* If possible, we avoid assigning a task to person solving in the next group. */
@@ -120,7 +121,7 @@ export function assignJudging(allPeople, eventsWithData, stationsCount, staffJud
             /* Especially important when `judgeOwnEventsOnly` applies, it makes people able to judge fewer events to be assigned first. */
             person => person.events.length
           ]);
-          group.peopleJudging = _.take(potentialJudges, judgesCount);
+          group.peopleJudging = _.take(potentialJudges, additionalJudgesCount);
           assignTask('judging', group.peopleJudging, eventId, group.id);
         }
       });
