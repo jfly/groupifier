@@ -1,2 +1,4 @@
 node_modules
 build
+# Bundled fonts file.
+src/pdfs/vfs-fonts.js

@@ -17,7 +17,8 @@
     "build": "webpack",
     "gh-pages": "gh-pages -d build",
     "deploy": "NODE_ENV=production npm run build && npm run gh-pages",
-    "wdserver": "webpack-dev-server --inline --hot --open"
+    "wdserver": "webpack-dev-server --inline --hot --open",
+    "postinstall": "bin/bundle_fonts.sh"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",

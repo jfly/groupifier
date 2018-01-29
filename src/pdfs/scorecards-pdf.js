@@ -82,7 +82,7 @@ export class ScorecardsPdf extends PdfDocument {
           widths: ['auto', '*'],
           body: [
             columnLabels(['ID', 'Name']),
-            [{ text: person.id, alignment: 'center' }, { text: person.name, maxHeight: 15 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */ }]
+            [{ text: person.id, alignment: 'center' }, { text: person.name, font: 'WenQuanYiZenHei', maxHeight: 20 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */ }]
           ]
         }
       },

@@ -26,7 +26,7 @@ export class SummaryPdf extends PdfDocument {
             if(!people) return {};
             return [
               { text: `${type} (${people.length})`, bold: true, fontSize: 10, margin: [0, 0, 0, 2] },
-              { ul: _.map(people, 'name').sort() }
+              { ul: _.map(people, 'name').sort(), font: 'WenQuanYiZenHei' }
             ];
           })
         }
