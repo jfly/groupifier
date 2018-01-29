@@ -22,6 +22,7 @@ const errorHandlers = catchErrors({
   CsvParsingError: () => new ErrorDialog().showError('Failed to parse the given CSV file.'),
   WcaApiError: () => new ErrorDialog().showError('Failed to fetch data from the WCA website.'),
   AbortError: () => {},
+  IncompleteWcifError: error => new ErrorDialog().showError(`Incomplete WCIF: ${error.data}`),
   default: () => new ErrorDialog().showError('Something went wrong.')
 });
 
