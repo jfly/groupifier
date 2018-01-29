@@ -137,11 +137,11 @@ export function setWcifScrambleGroupsCount(wcif, eventsWithData, stationsCount) 
       const wcifEvent = _.find(wcif.events, { id: eventId });
       const [firstWcifRound, ...nextWcifRounds] = wcifEvent.rounds;
       const eventName = _.find(eventObjects, { id: eventId }).name;
-      if (!firstWcifRound) throw new IncompleteWcifError(`No rounds specified for ${eventName}.`);
+      if (!firstWcifRound) throw new IncompleteWcifError({ message: `No rounds specified for ${eventName}.` });
       firstWcifRound.scrambleGroupCount = groups.length;
       _.reduce(nextWcifRounds, ([wcifRound, competitorsCount], nextWcifRound) => {
         const wcifAdvancementCondition = wcifRound.advancementCondition;
-        if (!wcifAdvancementCondition) throw new IncompleteWcifError(`Mising advancement conditions for ${eventName}.`);
+        if (!wcifAdvancementCondition) throw new IncompleteWcifError({ message: `Mising advancement conditions for ${eventName}.` });
         let nextRoundCompetitorsCount;
         switch (wcifAdvancementCondition.type) {
           case 'ranking':

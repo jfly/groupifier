@@ -53,7 +53,7 @@ function saveAccessTokenFromHash() {
   }
 }
 
-function wcaApiFetch(path, fetchOptions) {
+function wcaApiFetch(path, fetchOptions = {}) {
   const baseApiUrl = `${wcaOrigin}/api/v0`;
 
   return fetch(`${baseApiUrl}${path}`, _.assign({}, fetchOptions, {
@@ -62,5 +62,14 @@ function wcaApiFetch(path, fetchOptions) {
       'Content-Type': 'application/json'
     })
   }))
-  .then(response => response.ok ? response.json() : Promise.reject(new WcaApiError(response)))
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      const message = ['POST', 'PATCH', 'PUT'].includes(fetchOptions.method)
+                    ? 'Failed to save data to the WCA website.'
+                    : 'Failed to fetch data from the WCA website.'
+      return Promise.reject(new WcaApiError({ response, message }));
+    }
+  });
 }

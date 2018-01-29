@@ -20,9 +20,9 @@ import { sideEventsByMainEvents } from './simultaneous-events';
 
 const errorHandlers = catchErrors({
   CsvParsingError: () => new ErrorDialog().showError('Failed to parse the given CSV file.'),
-  WcaApiError: () => new ErrorDialog().showError('Failed to fetch data from the WCA website.'),
+  WcaApiError: error => new ErrorDialog().showError(error.data.message),
   AbortError: () => {},
-  IncompleteWcifError: error => new ErrorDialog().showError(`Incomplete WCIF: ${error.data}`),
+  IncompleteWcifError: error => new ErrorDialog().showError(`Incomplete WCIF: ${error.data.message}`),
   default: () => new ErrorDialog().showError('Something went wrong.')
 });
 
