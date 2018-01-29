@@ -110,16 +110,26 @@
                 <input class="hidden-file-input" type="file" id="file-input" accept=".csv">
               </div>
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="stations-input">
+                  The number of solving stations.
+                </div>
                 <input class="mdl-textfield__input" type="text" id="stations-input" pattern="\d*">
                 <label class="mdl-textfield__label" for="stations-input">Stations count</label>
                 <span class="mdl-textfield__error">must be a natural number</span>
               </div>
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <div class="mdl-tooltip mdl-tooltip--right" data-mdl-for="scramblers-input">
+                  The number of scramblers to generate for each round.
+                </div>
                 <input class="mdl-textfield__input" type="text" id="scramblers-input" pattern="\d*">
                 <label class="mdl-textfield__label" for="scramblers-input">Scramblers count</label>
                 <span class="mdl-textfield__error">must be a natural number</span>
               </div>
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="staff-judges-input">
+                  The number of staff judges that you provide on your own (e.g. volunteers).
+                  <br>If you want the application to generate all the judges, set this to 0.
+                </div>
                 <input class="mdl-textfield__input" type="text" id="staff-judges-input" pattern="\d*">
                 <label class="mdl-textfield__label" for="staff-judges-input">Staff judges count</label>
                 <span class="mdl-textfield__error">must be a natural number</span>
