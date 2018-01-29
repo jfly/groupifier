@@ -30,6 +30,11 @@ $('#add-simultaneous-events').addEventListener('click', () => {
 });
 
 export function sideEventsByMainEvents() {
-  const simultaneousEventsRows = $all('.simultaneous-events-pair');
-  return _.fromPairs(_.map(simultaneousEventsRows, row => [row.dataset.mainEvent, row.dataset.sideEvent]));
+  const simultaneousEvents = $('#simultaneous-events-input').checked;
+  if (simultaneousEvents) {
+    const simultaneousEventsRows = $all('.simultaneous-events-pair');
+    return _.fromPairs(_.map(simultaneousEventsRows, row => [row.dataset.mainEvent, row.dataset.sideEvent]));
+  } else {
+    return {};
+  }
 }
