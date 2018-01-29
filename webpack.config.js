@@ -5,6 +5,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const sourcePath = path.resolve(__dirname, 'src');
 const destinationPath = path.resolve(__dirname, 'build');
@@ -46,7 +47,8 @@ let config = {
     new webpack.DefinePlugin({
       WCA_ORIGIN_URL: JSON.stringify(production ? 'https://www.worldcubeassociation.org' : 'https://staging.worldcubeassociation.org'),
       WCA_OAUTH_CLIENT_ID: JSON.stringify(production ? 'd965f9184bbcf9dfade91e2327c05e2aedef7cd7b6c01c1de7e3e23d62530e5a' : 'example-application-id')
-    })
+    }),
+    new CopyWebpackPlugin(['pdfs/vfs-fonts.bundle.json'])
   ],
   devServer: {
     contentBase: destinationPath

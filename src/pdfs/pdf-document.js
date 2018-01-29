@@ -1,8 +1,10 @@
 import pdfMake from 'pdfmake/build/pdfmake';
-import pdfMakeFonts from './vfs-fonts';
 
-/* Set PDF Make virtual file system with Base64 font files. */
-pdfMake.vfs = pdfMakeFonts;
+/* Asynchronically download base64 font files bundle for PDF Make. */
+fetch('vfs-fonts.bundle.json')
+  .then(response => response.json())
+  .then(pdfMakeFonts => pdfMake.vfs = pdfMakeFonts);
+
 pdfMake.fonts = {
   Roboto: {
     normal: 'Roboto-Regular.ttf',
