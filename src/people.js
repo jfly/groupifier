@@ -7,7 +7,7 @@ import { getPeopleData } from './wca-api';
 
 class CsvParsingError extends ApplicationError {}
 
-export function peopleFromCsvFile(file) {
+export function peopleFromCsvFile(file, swapLatinWithLocalNames) {
   return new Promise((resolve, reject) => {
     parseCSV(file, {
       header: true,
@@ -17,7 +17,7 @@ export function peopleFromCsvFile(file) {
         resolve(
           rows.map((row, index) => ({
             id: index + 1,
-            name: row['Name'],
+            name: swapLatinWithLocalNames ? row['Name'].replace(/(.+)\s+\((.+)\)/, '$2 ($1)') : row['Name'],
             wcaId: row['WCA ID'].toUpperCase(),
             events: _.map(eventObjects, 'id').filter(eventId => row[eventId] === '1'),
             solving: {},

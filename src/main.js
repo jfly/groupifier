@@ -68,6 +68,7 @@ $('#generate').addEventListener('click', () => {
   const skipNewcomers = $('#skip-newcomers-input').checked;
   const judgeOwnEventsOnly = $('#judge-own-events-only-input').checked;
   const askForScramblers = $('#ask-for-scramblers-input').checked;
+  const preferLocalNames = $('#prefer-local-names-input').checked;
   /* People that shouldn't be assigned tasks. */
   const wcaIdsToSkip = [];
   skipNewcomers && wcaIdsToSkip.push("");
@@ -77,7 +78,7 @@ $('#generate').addEventListener('click', () => {
   }
   /* Main logic. */
   Promise.all([
-    peopleFromCsvFile(registrationsFile).then(peopleWithWcaData),
+    peopleFromCsvFile(registrationsFile, preferLocalNames).then(peopleWithWcaData),
     getCompetitionWcif(competitionJson.id)
   ])
   .then(([people, wcif]) => {
