@@ -121,7 +121,7 @@ export class ScorecardsPdf extends PdfDocument {
         fontSize: 10,
         columns: [
           cutoff ? { text: `Cutoff: ${cutoffToString(cutoff, eventObject.id)}`, alignment: 'center' } : {},
-          timeLimit ? { text: `DNF Limit: ${timeLimitToString(timeLimit)}`, alignment: 'center' } : {}
+          timeLimit ? { text: `Time limit: ${timeLimitToString(timeLimit)}`, alignment: 'center' } : {}
         ]
       },
     ]
