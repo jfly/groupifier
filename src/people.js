@@ -17,7 +17,8 @@ export function peopleFromCsvFile(file, swapLatinWithLocalNames) {
         resolve(
           rows.map((row, index) => ({
             id: index + 1,
-            name: swapLatinWithLocalNames ? row['Name'].replace(/(.+)\s+\((.+)\)/, '$2 ($1)') : row['Name'],
+            name: row['Name'],
+            pdfName: pdfName(row['Name'], swapLatinWithLocalNames),
             wcaId: row['WCA ID'].toUpperCase(),
             events: _.map(eventObjects, 'id').filter(eventId => row[eventId] === '1'),
             solving: {},
@@ -38,4 +39,12 @@ export function peopleWithWcaData(people) {
       });
     })
     .then(() => people);
+}
+
+function pdfName(name, swapLatinWithLocalNames) {
+  const [match, latinName, localName] = name.match(/(.+)\s+\((.+)\)/) || [null, name, null];
+  if (!localName) return [{ text: latinName }];
+  const pdfNames = [{ text: latinName }, { text: localName, font: 'WenQuanYiZenHei' }];
+  const [first, second] = swapLatinWithLocalNames ? pdfNames.reverse() : pdfNames;
+  return [first, ' (', second, ')'];
 }

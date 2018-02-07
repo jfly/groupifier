@@ -26,8 +26,8 @@ export class PersonalCardsPdf extends PdfDocument {
         return [eventObject.name, groupsText('solving'), groupsText('scrambling'), groupsText('judging')];
       });
     return [
-      { text: `${person.name}`, font: 'WenQuanYiZenHei' },
-      { text: person.wcaId ? `WCA ID: ${person.wcaId}` : " ", font: 'WenQuanYiZenHei' },
+      { text: person.pdfName },
+      { text: person.wcaId ? `WCA ID: ${person.wcaId}` : " " },
       {
         table: {
           body: [['Event', 'Solving', 'Scrambling', 'Judging'], ...tableBody]
