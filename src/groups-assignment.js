@@ -4,7 +4,9 @@ import { eventObjects, selfsufficientEvents } from './events';
 import { ScramblersDialog } from './dialogs/scramblers-dialog';
 import { ApplicationError } from './errors';
 
-class IncompleteWcifError extends ApplicationError {}
+class IncompleteWcifError extends ApplicationError {
+  get type() { return 'IncompleteWcifError'; }
+}
 
 export function assignGroups(allPeople, stationsCount, sortByResults, sideEventByMainEvent) {
   return _(eventObjects)

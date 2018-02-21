@@ -5,7 +5,9 @@ import { ApplicationError } from './errors';
 const wcaOrigin = WCA_ORIGIN_URL;
 const wcaOAuthClientId = WCA_OAUTH_CLIENT_ID;
 
-class WcaApiError extends ApplicationError {}
+class WcaApiError extends ApplicationError {
+  get type() { return 'WcaApiError'; }
+}
 
 saveAccessTokenFromHash();
 let wcaAccessToken = localStorage.getItem('Groupifier.accessToken');

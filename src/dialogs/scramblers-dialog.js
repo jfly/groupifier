@@ -5,7 +5,9 @@ import { addEventListenerOnce } from '../helpers';
 import { eventObjects } from '../events';
 import { ApplicationError } from '../errors';
 
-class AbortError extends ApplicationError {}
+class AbortError extends ApplicationError {
+  get type() { return 'AbortError'; }
+}
 
 export class ScramblersDialog extends Dialog {
   constructor() {

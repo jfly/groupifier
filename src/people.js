@@ -5,7 +5,9 @@ import { ApplicationError } from './errors';
 import { eventObjects } from './events';
 import { getPeopleData } from './wca-api';
 
-class CsvParsingError extends ApplicationError {}
+class CsvParsingError extends ApplicationError {
+  get type() { return 'CsvParsingError'; }
+}
 
 export function peopleFromCsvFile(file, swapLatinWithLocalNames) {
   return new Promise((resolve, reject) => {
