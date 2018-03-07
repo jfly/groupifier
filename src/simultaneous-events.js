@@ -4,7 +4,7 @@ import { $, $all } from './helpers';
 import { eventObjects } from './events';
 
 const eventOptions = eventObjects.map(eventObject => `<option value="${eventObject.id}">${eventObject.name}</option>`);
-$all('.event-selectfield select').forEach(element => {
+_.each($all('.event-selectfield select'), element => {
   element.innerHTML = ['<option value="" selected></option>', ...eventOptions].join('\n');
 });
 
