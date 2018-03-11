@@ -8,6 +8,7 @@ font_files["Roboto-Medium.ttf"]="https://github.com/google/fonts/raw/master/apac
 font_files["Roboto-Italic.ttf"]="https://github.com/google/fonts/raw/master/apache/roboto/Roboto-Italic.ttf"
 font_files["Roboto-MediumItalic.ttf"]="https://github.com/google/fonts/raw/master/apache/roboto/Roboto-MediumItalic.ttf"
 font_files["WenQuanYiZenHei.ttf"]="https://github.com/layerssss/wqy/raw/gh-pages/fonts/WenQuanYiZenHei.ttf"
+font_files["ElMessiri-Regular.ttf"]="https://github.com/Gue3bara/El-Messiri/raw/master/fonts/ttf/ElMessiri-Regular.ttf"
 
 target="$(pwd)/src/pdfs/vfs-fonts.bundle.json"
 tmpdir=$(mktemp -d)

@@ -17,6 +17,12 @@ pdfMake.fonts = {
     bold: 'WenQuanYiZenHei.ttf',
     italics: 'WenQuanYiZenHei.ttf',
     bolditalics: 'WenQuanYiZenHei.ttf'
+  },
+  ElMassiri: {
+    normal: 'ElMessiri-Regular.ttf',
+    bold: 'ElMessiri-Regular.ttf',
+    italics: 'ElMessiri-Regular.ttf',
+    bolditalics: 'ElMessiri-Regular.ttf'
   }
 };
 
