@@ -46,15 +46,18 @@ export function peopleWithWcaData(people) {
 function pdfName(name, swapLatinWithLocalNames) {
   const [match, latinName, localName] = name.match(/(.+)\s+\((.+)\)/) || [null, name, null];
   if (!localName) return [{ text: latinName }];
-  const pdfNames = [{ text: latinName }, { text: localName, font: fontFor(localName) }];
+  const pdfNames = [{ text: latinName }, formatLocalName(localName)];
   const [first, second] = swapLatinWithLocalNames ? pdfNames.reverse() : pdfNames;
   return [first, ' (', second, ')'];
 }
 
-function fontFor(string) {
-  const rangesByFont = {
-    ElMassiri: [0x0600, 0x06FF] /* https://en.wikipedia.org/wiki/Arabic_(Unicode_block) */
+function formatLocalName(localName) {
+  if (_.inRange(localName.charCodeAt(0), 0x0600, 0x06FF)) {
+    /* https://en.wikipedia.org/wiki/Arabic_(Unicode_block) */
+    /* Workaround for RTL https://github.com/bpampuch/pdfmake/issues/184#issuecomment-352168378 */
+    return { text: localName.replace(/ /g, String.fromCharCode(160)), font: 'ElMassiri', fontSize: 10 };
+  } else {
+    /* Default to WenQuanYiZenHei as it supports many characters. */
+    return { text: localName, font: 'WenQuanYiZenHei' };
   }
-  /* Find font suitable for the first letter of the given string. Default to WenQuanYiZenHei as it supports many characters. */
-  return _.findKey(rangesByFont, range => _.inRange(string.charCodeAt(0), ...range)) || 'WenQuanYiZenHei';
 }
