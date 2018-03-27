@@ -8,5 +8,9 @@ to see the purpose of this tool.
 ```bash
 git clone https://github.com/jonatanklosko/groupifier.git && cd groupifier
 npm install
-npm run wdserver # Run webpack-dev-server
+npm start
 ```
+
+### Testing
+
+Run `npm test`.
