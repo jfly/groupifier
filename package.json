@@ -35,7 +35,8 @@
     "style-loader": "^0.18.2",
     "url-search-params-polyfill": "^3.0.0",
     "webpack": "^3.5.3",
-    "webpack-dev-server": "^2.7.1"
+    "webpack-dev-server": "^2.7.1",
+    "whatwg-fetch": "^2.0.3"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",

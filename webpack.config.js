@@ -14,7 +14,7 @@ const production = process.env.NODE_ENV === 'production';
 
 let config = {
   context: sourcePath,
-  entry: ['babel-polyfill', 'url-search-params-polyfill', './main.js'],
+  entry: ['babel-polyfill', 'url-search-params-polyfill', 'whatwg-fetch', './main.js'],
   output: {
     path: destinationPath,
     filename: production ? '[name].[hash].js' : '[name].bundle.js'
