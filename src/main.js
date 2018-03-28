@@ -88,11 +88,16 @@ $('#generate').addEventListener('click', () => {
       setScrambleGroupsCount && setWcifScrambleGroupsCount(wcif, eventsWithData, stationsCount);
       return Promise.all([
         setScrambleGroupsCount && saveCompetitionEventsWcif(wcif),
-        ..._.invokeMap([
-          new ScorecardsPdf(eventsWithData, wcif),
+        /* PDFs are generated synchronously, so there's no point in invoking all `download`s at once.
+           Doing so makes the user wait long and save everything at once at the end
+           (seems like the browser is too busy to show the save dialog).
+           Instead, if we call `download` one by one
+           then the user can save each file as soon as it's ready. */
+        [
+          new SummaryPdf(eventsWithData),
           new PersonalCardsPdf(people),
-          new SummaryPdf(eventsWithData)
-        ], 'download')
+          new ScorecardsPdf(eventsWithData, wcif),
+        ].reduce((promise, pdf) => promise.then(() => pdf.download()), Promise.resolve())
       ]);
     });
   })
