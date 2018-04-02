@@ -120,6 +120,8 @@ export function assignJudging(allPeople, eventsWithData, stationsCount, staffJud
             person => wcaIdsToSkip.includes(person.wcaId),
             /* If possible, we avoid assigning a task to person solving in the next group. */
             person => _.get(groups, [groupIndex + 1, 'peopleSolving'], []).includes(person),
+            /* We avoid assigning judging in more than two groups for the given event. */
+            person => _.size(person.judging[eventId]) >= 2,
             /* Equally distribute tasks. */
             person => _.sum(_.map(person.scrambling, _.size)) + _.sum(_.map(person.judging, _.size)),
             /* Prefer people that solve fewer events, to avoid overloading people solving more. */
