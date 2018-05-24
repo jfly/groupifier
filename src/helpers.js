@@ -49,6 +49,6 @@ function multibldAttemptResultToPoints(attemptResult) {
 
 function centisecondsToClockFormat(centiseconds) {
   const date = new Date(null);
-  date.setMilliseconds(centiseconds * 10);
+  date.setUTCMilliseconds(centiseconds * 10);
   return date.toISOString().substr(11, 11).replace(/^[0:]*(?!\.)/g, '');
 }
