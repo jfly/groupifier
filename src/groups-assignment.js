@@ -142,7 +142,7 @@ export function setWcifScrambleGroupsCount(wcif, eventsWithData, stationsCount) 
       const [firstWcifRound, ...nextWcifRounds] = wcifEvent.rounds;
       const eventName = _.find(eventObjects, { id: eventId }).name;
       if (!firstWcifRound) throw new IncompleteWcifError({ message: `No rounds specified for ${eventName}.` });
-      firstWcifRound.scrambleGroupCount = groups.length;
+      firstWcifRound.scrambleSetCount = groups.length;
       _.reduce(nextWcifRounds, ([wcifRound, competitorsCount], nextWcifRound) => {
         const wcifAdvancementCondition = wcifRound.advancementCondition;
         if (!wcifAdvancementCondition) throw new IncompleteWcifError({ message: `Mising advancement conditions for ${eventName}.` });
@@ -164,7 +164,7 @@ export function setWcifScrambleGroupsCount(wcif, eventsWithData, stationsCount) 
           default:
             throw new Error(`Unrecognised AdvancementCondition type: '${wcifAdvancementCondition.type}'`);
         }
-        nextWcifRound.scrambleGroupCount = calculateGroupsCount(eventId, nextRoundCompetitorsCount, stationsCount, 1);
+        nextWcifRound.scrambleSetCount = calculateGroupsCount(eventId, nextRoundCompetitorsCount, stationsCount, 1);
         return [nextWcifRound, nextRoundCompetitorsCount];
       }, [firstWcifRound, people.length]);
     });
