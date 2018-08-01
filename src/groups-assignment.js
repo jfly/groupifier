@@ -77,13 +77,15 @@ export function assignScrambling(eventsWithData, scramblersCount, askForScramble
       return groups.map((group, groupIndex) => {
         return () => {
           const potentialScramblers = _.sortBy(_.difference(people, group.peopleSolving, peopleSolvingSideEvent), [
+            /* Avoid assigning tasks to very young competitors. */
+            person => person.age <= 8,
             /* People that shouldn't be assigned tasks are moved to the very end. */
             person => wcaIdsToSkip.includes(person.wcaId),
-            /* If possible, we avoid assigning a task to person solving in the next group. */
+            /* If possible, avoid assigning a task to person solving in the next group. */
             person => _.get(groups, [groupIndex + 1, 'peopleSolving'], []).includes(person),
-            /* We avoid assigning scrambling in more than two groups for the given event. */
+            /* Avoid assigning scrambling in more than two groups for the given event. */
             person => _.size(person.scrambling[eventId]) >= 2,
-            /* We avoid assigning scrambling in more than six groups in general. */
+            /* Avoid assigning scrambling in more than six groups in general. */
             person => _.sum(_.map(person.scrambling, _.size)) >= 6,
             /* Sort scramblers by results. */
             person => _.get(person, `wcaData.personal_records.${eventId}.average.world_rank`),
@@ -114,13 +116,15 @@ export function assignJudging(allPeople, eventsWithData, stationsCount, staffJud
         const additionalJudgesCount = judgesCount - staffJudgesCount;
         if(additionalJudgesCount > 0) {
           const potentialJudges = _.sortBy(_.difference(allPeople, group.peopleSolving, group.peopleScrambling, peopleSolvingSideEvent), [
+            /* Avoid assigning tasks to very young competitors. */
+            person => person.age <= 8,
             /* If judgeOwnEventsOnly is enabled, people that haven't registered for this event are moved to the very end. */
             person => judgeOwnEventsOnly && !people.includes(person),
             /* People that shouldn't be assigned tasks are moved to the very end. */
             person => wcaIdsToSkip.includes(person.wcaId),
-            /* If possible, we avoid assigning a task to person solving in the next group. */
+            /* If possible, avoid assigning a task to person solving in the next group. */
             person => _.get(groups, [groupIndex + 1, 'peopleSolving'], []).includes(person),
-            /* We avoid assigning judging in more than two groups for the given event. */
+            /* Avoid assigning judging in more than two groups for the given event. */
             person => _.size(person.judging[eventId]) >= 2,
             /* Equally distribute tasks. */
             person => _.sum(_.map(person.scrambling, _.size)) + _.sum(_.map(person.judging, _.size)),

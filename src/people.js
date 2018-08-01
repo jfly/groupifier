@@ -22,6 +22,7 @@ export function peopleFromCsvFile(file, swapLatinWithLocalNames) {
             name: row['Name'],
             pdfName: pdfName(row['Name'], swapLatinWithLocalNames),
             wcaId: row['WCA ID'].toUpperCase(),
+            age: calculateAge(new Date(row['Birth Date'])),
             events: _.map(eventObjects, 'id').filter(eventId => row[eventId] === '1'),
             solving: {},
             scrambling: {},
@@ -60,4 +61,9 @@ function formatLocalName(localName) {
     /* Default to WenQuanYiZenHei as it supports many characters. */
     return { text: localName, font: 'WenQuanYiZenHei' };
   }
+}
+
+function calculateAge(dob) {
+  const diffMs = Date.now() - dob.getTime();
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 365.2425));
 }
