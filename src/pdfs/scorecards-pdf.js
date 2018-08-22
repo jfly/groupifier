@@ -90,17 +90,17 @@ export class ScorecardsPdf extends PdfDocument {
       {
         margin: [0, 10, 0, 0],
         table: {
-          widths: [16, '*', 30, 30], /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */
+          widths: [16, 30, '*', 30, 30], /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */
           body: [
-            columnLabels(['', 'Result', 'Judge', 'Comp'], { alignment: 'center' }),
+            columnLabels(['', 'Scr', 'Result', 'Judge', 'Comp'], { alignment: 'center' }),
             ..._.range(1, maxAttemptsCount + 1)
               .map(attemptNumber => [
-                [{ text: attemptNumber, border: [false, false, false, false], fontSize: 20, alignment: 'center', bold: true }, {}, {} ,{}]
+                [{ text: attemptNumber, border: [false, false, false, false], fontSize: 20, alignment: 'center', bold: true }, {}, {}, {}, {}]
               ])
               .reduce((rows1, rows2, attemptsCount) =>
                 rows1.concat([[
                   {
-                    border: [false, false, false, false], colSpan: 4, margin: [0, 1],
+                    border: [false, false, false, false], colSpan: 5, margin: [0, 1],
                     columns: (attemptsCount === _.get(cutoff, 'numberOfAttempts') ? [{
                       canvas: [{
                         type: 'line',
@@ -112,9 +112,9 @@ export class ScorecardsPdf extends PdfDocument {
                   }
                 ]], rows2)
               ),
-            [{ text: 'Extra attempt', border: [false, false, false, false], colSpan: 4, margin: [0, 1], fontSize: 10 }],
-            [{ text: '_', border: [false, false, true, false], fontSize: 20, alignment: 'center', bold: true }, {}, {}, {}],
-            [{ text: '', border: [false, false, false, false], colSpan: 4, margin: [0, 1] }]
+            [{ text: 'Extra attempt', border: [false, false, false, false], colSpan: 5, margin: [0, 1], fontSize: 10 }],
+            [{ text: '_', border: [false, false, false, false], fontSize: 20, alignment: 'center', bold: true }, {}, {}, {}, {}],
+            [{ text: '', border: [false, false, false, false], colSpan: 5, margin: [0, 1] }]
           ]
         }
       },
