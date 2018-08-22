@@ -7,6 +7,7 @@ import { cutoffToString, timeLimitToString } from '../helpers';
 const pageWidth = 595;
 const pageHeight = 842;
 const scorecardMargin = 20;
+const scorecardsPerPage = 2;
 
 export class ScorecardsPdf extends PdfDocument {
   constructor(eventsWithData, wcif) {
@@ -24,8 +25,8 @@ export class ScorecardsPdf extends PdfDocument {
         const groupScorecards = _.map(group.peopleSolving, person =>
           this.scorecard(scorecardNumber--, wcif.shortName, eventObject, group.id, person, maxAttemptsCount, cutoff, timeLimit)
         );
-        const scorecardsOnLastPage = groupScorecards.length % 4;
-        return scorecardsOnLastPage === 0 ? groupScorecards : groupScorecards.concat(_.times(4 - scorecardsOnLastPage, _.constant({})));
+        const scorecardsOnLastPage = groupScorecards.length % scorecardsPerPage;
+        return scorecardsOnLastPage === 0 ? groupScorecards : groupScorecards.concat(_.times(scorecardsPerPage - scorecardsOnLastPage, _.constant({})));
       });
     });
     const dashedLine = properties =>
@@ -49,11 +50,11 @@ export class ScorecardsPdf extends PdfDocument {
           defaultBorder: false
         },
         table: {
-          widths: ['*', '*'],
+          widths: ['*'],//<<<, '*'],
           /* A4 page height in pixels minus vertical margins and three invisible, vertical borders of the root table, divided into a half. */
           heights: Math.floor((pageHeight - 4 * scorecardMargin - 3) / 2),
           dontBreakRows: true,
-          body: _.chunk(scorecards, 2)
+          body: _.chunk(scorecards, 1)
         }
       }
     };

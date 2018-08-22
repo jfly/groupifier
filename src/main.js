@@ -94,8 +94,8 @@ $('#generate').addEventListener('click', () => {
            Instead, if we call `download` one by one
            then the user can save each file as soon as it's ready. */
         [
-          new SummaryPdf(eventsWithData),
-          new PersonalCardsPdf(people),
+          //<<< new SummaryPdf(eventsWithData),
+          //<<< new PersonalCardsPdf(people),
           new ScorecardsPdf(eventsWithData, wcif),
         ].reduce((promise, pdf) => promise.then(() => pdf.download()), Promise.resolve())
       ]);
