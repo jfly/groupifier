@@ -11,6 +11,7 @@ import { $, $all } from './helpers';
 import { catchErrors } from './errors';
 import { ErrorDialog } from './dialogs/error-dialog';
 import { signIn, signOut, isSignedIn, getUpcomingManageableCompetitions, getCompetitionWcif, saveCompetitionEventsWcif } from './wca-api';
+import { validateEventsWcif } from './events';
 import { peopleFromCsvFile, peopleWithWcaData } from './people';
 import { assignGroups, assignScrambling, assignJudging, setWcifScrambleGroupsCount } from './groups-assignment';
 import { ScorecardsPdf } from './pdfs/scorecards-pdf';
@@ -84,6 +85,9 @@ $('#generate').addEventListener('click', () => {
     getCompetitionWcif(competitionJson.id)
   ])
   .then(([people, wcif]) => {
+    const csvEventIds = _.uniq(_.flatMap(people, 'events'));
+    validateEventsWcif(wcif, csvEventIds);
+    /* Assign groups, scramblers and judges. Generate PDFs. */
     const eventsWithData = assignGroups(people, stationsCount, sortByResults, sideEventsByMainEvents());
     return assignScrambling(eventsWithData, scramblersCount, askForScramblers, wcaIdsToSkip, tasksMinAge).then(() => {
       assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, wcaIdsToSkip, judgeOwnEventsOnly, tasksMinAge);

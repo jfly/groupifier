@@ -1,3 +1,7 @@
+import _ from 'lodash';
+
+import { ApplicationError } from './errors';
+
 export const eventObjects = [
   { id: '333',    name: '3x3x3 Cube',         shortName: '3x3'   },
   { id: '222',    name: '2x2x2 Cube',         shortName: '2x2'   },
@@ -21,3 +25,27 @@ export const eventObjects = [
 
 /* These events consist of a single group and doesn't require assigning scramblers and judges. */
 export const selfsufficientEvents = ['333fm', '444bf', '555bf', '333mbf'];
+
+/* WCIF stuff */
+
+class IncompleteWcifError extends ApplicationError {
+  get type() { return 'IncompleteWcifError'; }
+}
+
+export function validateEventsWcif(wcif, csvEventIds) {
+  csvEventIds.forEach(eventId => {
+    const wcifEvent = _.find(wcif.events, { id: eventId });
+    const eventName = _.find(eventObjects, { id: eventId }).name;
+    if (!wcifEvent) {
+      throw new IncompleteWcifError({ message: `Missing event: ${eventName}.` });
+    } else if (wcifEvent.rounds.length === 0) {
+      throw new IncompleteWcifError({ message: `No rounds specified for ${eventName}.` });
+    }
+    _.initial(wcifEvent.rounds).forEach(wcifRound => {
+      const [, roundNumber] = wcifRound.id.match(/^\w+-r(\d+)$/);
+      if (!wcifRound.advancementCondition) {
+        throw new IncompleteWcifError({ message: `Mising advancement condition for ${eventName} Round ${roundNumber}.` });
+      }
+    });
+  });
+}

@@ -2,11 +2,6 @@ import _ from 'lodash';
 
 import { eventObjects, selfsufficientEvents } from './events';
 import { ScramblersDialog } from './dialogs/scramblers-dialog';
-import { ApplicationError } from './errors';
-
-class IncompleteWcifError extends ApplicationError {
-  get type() { return 'IncompleteWcifError'; }
-}
 
 export function assignGroups(allPeople, stationsCount, sortByResults, sideEventByMainEvent) {
   return _(eventObjects)
@@ -145,11 +140,9 @@ export function setWcifScrambleGroupsCount(wcif, eventsWithData, stationsCount) 
       const wcifEvent = _.find(wcif.events, { id: eventId });
       const [firstWcifRound, ...nextWcifRounds] = wcifEvent.rounds;
       const eventName = _.find(eventObjects, { id: eventId }).name;
-      if (!firstWcifRound) throw new IncompleteWcifError({ message: `No rounds specified for ${eventName}.` });
       firstWcifRound.scrambleSetCount = groups.length;
       _.reduce(nextWcifRounds, ([wcifRound, competitorsCount], nextWcifRound) => {
         const wcifAdvancementCondition = wcifRound.advancementCondition;
-        if (!wcifAdvancementCondition) throw new IncompleteWcifError({ message: `Mising advancement conditions for ${eventName}.` });
         let nextRoundCompetitorsCount;
         switch (wcifAdvancementCondition.type) {
           case 'ranking':
