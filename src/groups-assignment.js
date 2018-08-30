@@ -68,7 +68,7 @@ function assignGroupsForEvent(eventId, people, sortByResults, stationsCount, min
   return groups;
 }
 
-export function assignScrambling(eventsWithData, scramblersCount, askForScramblers, wcaIdsToSkip) {
+export function assignScrambling(eventsWithData, scramblersCount, askForScramblers, wcaIdsToSkip, minAge) {
   const scramblersDialog = askForScramblers && new ScramblersDialog();
   return _(eventsWithData)
     .reject(([eventId, data]) => selfsufficientEvents.includes(eventId))
@@ -78,7 +78,7 @@ export function assignScrambling(eventsWithData, scramblersCount, askForScramble
         return () => {
           const potentialScramblers = _.sortBy(_.difference(people, group.peopleSolving, peopleSolvingSideEvent), [
             /* Avoid assigning tasks to very young competitors. */
-            person => person.age <= 8,
+            person => person.age < minAge,
             /* People that shouldn't be assigned tasks are moved to the very end. */
             person => wcaIdsToSkip.includes(person.wcaId),
             /* If possible, avoid assigning a task to person solving in the next group. */
@@ -107,7 +107,7 @@ export function assignScrambling(eventsWithData, scramblersCount, askForScramble
     .then(() => askForScramblers && new Promise(resolve => window.requestAnimationFrame(resolve)));
 }
 
-export function assignJudging(allPeople, eventsWithData, stationsCount, staffJudgesCount, wcaIdsToSkip, judgeOwnEventsOnly) {
+export function assignJudging(allPeople, eventsWithData, stationsCount, staffJudgesCount, wcaIdsToSkip, judgeOwnEventsOnly, minAge) {
   _(eventsWithData)
     .reject(([eventId, data]) => selfsufficientEvents.includes(eventId))
     .each(([eventId, { groups, people, peopleSolvingSideEvent }]) => {
@@ -117,7 +117,7 @@ export function assignJudging(allPeople, eventsWithData, stationsCount, staffJud
         if(additionalJudgesCount > 0) {
           const potentialJudges = _.sortBy(_.difference(allPeople, group.peopleSolving, group.peopleScrambling, peopleSolvingSideEvent), [
             /* Avoid assigning tasks to very young competitors. */
-            person => person.age <= 8,
+            person => person.age < minAge,
             /* If judgeOwnEventsOnly is enabled, people that haven't registered for this event are moved to the very end. */
             person => judgeOwnEventsOnly && !people.includes(person),
             /* People that shouldn't be assigned tasks are moved to the very end. */

@@ -37,6 +37,12 @@ main {
   font-size: inherit;
 }
 
+.tasks-min-age {
+  display: inline-block;
+  width: 20px;
+  padding: 0;
+}
+
 /* Show the simultaneous events table if the checkbox is checked. */
 label[for="simultaneous-events-input"]:not(.is-checked) + #simultaneous-events-table {
   display: none;

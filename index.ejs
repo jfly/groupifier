@@ -157,6 +157,19 @@
                 <input class="mdl-checkbox__input" type="checkbox" id="skip-managers-input" checked>
                 <span class="mdl-checkbox__label">Skip delegates and organizers during task assignment</span>
               </label>
+              <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="skip-youngs-label">
+                Prevents from assigning tasks (scrambling, judging) to competitors under the specified age, as long as this is possible.
+              </div>
+              <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" id="skip-youngs-label" for="skip-youngs-input">
+                <input class="mdl-checkbox__input" type="checkbox" id="skip-youngs-input" checked>
+                <span class="mdl-checkbox__label">
+                  <span>Skip competitors under</span>
+                  <div class="mdl-textfield mdl-js-textfield tasks-min-age">
+                    <input class="mdl-textfield__input" type="text" id="tasks-min-age-input" pattern="\d*" value="8">
+                  </div>
+                  <span>during task assignment.</span>
+                </span>
+              </label>
               <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="skip-newcomers-label">
                 Prevents from assigning tasks (scrambling, judging) to first-time competitors, as long as this is possible.
               </div>
