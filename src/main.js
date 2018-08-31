@@ -175,3 +175,13 @@ $('#file-input').addEventListener('change', event => {
   fileNameInput.parentNode.MaterialTextfield.checkValidity();
   updateButtonState();
 });
+
+/* Show feature toast 1s after the page loads. */
+setTimeout(() => {
+  $('#feature-toast').MaterialSnackbar.showSnackbar({
+    message: 'Come back here during the competition and print scorecards for subsequent rounds easily! \uD83C\uDF89',
+    timeout: 10000,
+    actionHandler: () => $('#feature-toast').classList.remove('mdl-snackbar--active'),
+    actionText: 'Ok'
+  });
+}, 1000);
