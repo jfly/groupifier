@@ -193,6 +193,7 @@ function assignTask(task, people, eventId, groupId) {
   });
 }
 
+/* Takes Cubecomps round objects and returns groups data for each of them. */
 export function ccRoundsToEventsWithData(ccRounds, wcif) {
   return Promise.all(ccRounds.map(ccRound =>
     getCompetitionResults(ccRound['competition_id'], ccRound['event_id'], ccRound['id'] - 1)
@@ -201,7 +202,7 @@ export function ccRoundsToEventsWithData(ccRounds, wcif) {
       const eventId = ccRound.eventObject.id;
       const people = _(previousRoundResults)
         .filter('top_position')
-        .sortBy(result => parseInt(result.position, 10))
+        .sortBy(result => -parseInt(result.position, 10))
         .map(personFromCubecompsResult)
         .value();
       const wcifEvent = _.find(wcif.events, { id: eventId });
