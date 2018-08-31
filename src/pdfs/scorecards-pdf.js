@@ -15,14 +15,15 @@ export class ScorecardsPdf extends PdfDocument {
     const events = eventObjects.filter(eventObject => groupsByEvent[eventObject.id] && eventObject.id !== '333fm');
     const maxAttemptsCountByFormat = { '1': 1, '2': 2, '3': 3, 'm': 3, 'a': 5 };
     const scorecards = _.flatMap(events, eventObject => {
-      let scorecardNumber = _.fromPairs(eventsWithData)[eventObject.id].people.length;
+      const eventData = _.fromPairs(eventsWithData)[eventObject.id];
+      let scorecardNumber = eventData.people.length;
       const wcifEvent = _.find(wcif.events, { id: eventObject.id }) || {};
-      const firstRound = _.get(wcifEvent.rounds, '0', {});
+      const firstRound = _.find(wcifEvent.rounds, { id: `${wcifEvent.id}-r${eventData.roundNumber}` });
       const { cutoff, timeLimit } = firstRound;
       const maxAttemptsCount = maxAttemptsCountByFormat[firstRound.format];
       return _.flatMap(groupsByEvent[eventObject.id], group => {
         const groupScorecards = _.map(group.peopleSolving, person =>
-          this.scorecard(scorecardNumber--, wcif.shortName, eventObject, group.id, person, maxAttemptsCount, cutoff, timeLimit)
+          this.scorecard(scorecardNumber--, wcif.shortName, eventObject, eventData.roundNumber, group.id, person, maxAttemptsCount, cutoff, timeLimit)
         );
         const scorecardsOnLastPage = groupScorecards.length % 4;
         return scorecardsOnLastPage === 0 ? groupScorecards : groupScorecards.concat(_.times(4 - scorecardsOnLastPage, _.constant({})));
@@ -59,7 +60,7 @@ export class ScorecardsPdf extends PdfDocument {
     };
   }
 
-  scorecard(scorecardNumber, competitionName, eventObject, groupId, person, maxAttemptsCount, cutoff, timeLimit) {
+  scorecard(scorecardNumber, competitionName, eventObject, roundNumber, groupId, person, maxAttemptsCount, cutoff, timeLimit) {
     const columnLabels = (labels, style = {}) =>
       labels.map(label => _.assign({ border: [false, false, false, false], fontSize: 10, text: label }, style));
 
@@ -72,7 +73,7 @@ export class ScorecardsPdf extends PdfDocument {
           widths: ['*', 'auto', 'auto'],
           body: [
             columnLabels(['Event', 'Round', 'Group']),
-            [eventObject.name, { text: '1', alignment: 'center' }, { text: groupId, alignment: 'center' }]
+            [eventObject.name, { text: roundNumber, alignment: 'center' }, { text: groupId, alignment: 'center' }]
           ]
         }
       },

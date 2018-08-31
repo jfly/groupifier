@@ -44,6 +44,20 @@ export function peopleWithWcaData(people) {
     .then(() => people);
 }
 
+export function personFromCubecompsResult(result) {
+  return {
+    id: parseInt(result['competitor_id'], 10),
+    name: result['name'],
+    pdfName: pdfName(result['name']),
+    wcaId: undefined,
+    age: undefined,
+    events: undefined,
+    solving: {},
+    scrambling: {},
+    judging: {}
+  };
+}
+
 function pdfName(name, swapLatinWithLocalNames) {
   const [match, latinName, localName] = name.match(/(.+)\s+\((.+)\)/) || [null, name, null];
   if (!localName) return [{ text: latinName }];

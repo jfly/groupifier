@@ -1,7 +1,10 @@
 import _ from 'lodash';
 
 import { eventObjects, selfsufficientEvents } from './events';
-import { ScramblersDialog } from './dialogs/scramblers-dialog';
+import { ScramblersDialog } from './dialogs/scramblers-dialog'
+
+import { getCompetitionResults } from './cubecomps-api';
+import { personFromCubecompsResult } from './people';
 
 export function assignGroups(allPeople, stationsCount, sortByResults, sideEventByMainEvent) {
   return _(eventObjects)
@@ -25,7 +28,7 @@ export function assignGroups(allPeople, stationsCount, sortByResults, sideEventB
       const minGroupsCount = selfsufficientEvents.includes(eventId) ? 1 : 2;
       groups.push(...assignGroupsForEvent(eventId, _.difference(people, peopleSolvingSideEvent), sortByResults, stationsCount, minGroupsCount, _.identity));
 
-      return [eventId, { groups, people, peopleSolvingSideEvent }];
+      return [eventId, { groups, people, peopleSolvingSideEvent, roundNumber: 1 }];
     })
     .value();
 }
@@ -50,8 +53,12 @@ function assignGroupsForEvent(eventId, people, sortByResults, stationsCount, min
       return _.compact(_.flatten(_.zipWith(_.chunk(arrangedPeople, chunkSize), _.chunk(peopleOfSameName, 1), _.concat)));
     });
   }
-  const groups = [];
   const groupsCount = calculateGroupsCount(eventId, people.length, stationsCount, minGroupsCount);
+  return createGroups(groupsCount, people, eventId, numberToId);
+}
+
+function createGroups(groupsCount, people, eventId, numberToId = _.identity) {
+  const groups = [];
   _.range(1, groupsCount + 1).forEach(groupNumber => {
     const group = { id: numberToId(groupNumber) };
     const assignedPeopleCount = _.flatMap(groups, 'peopleSolving').length;
@@ -184,4 +191,23 @@ function assignTask(task, people, eventId, groupId) {
   people.forEach(person => {
     _.update(person, [task, eventId], groupIds => _.concat(groupIds || [], groupId));
   });
+}
+
+export function ccRoundsToEventsWithData(ccRounds, wcif) {
+  return Promise.all(ccRounds.map(ccRound =>
+    getCompetitionResults(ccRound['competition_id'], ccRound['event_id'], ccRound['id'] - 1)
+  )).then(roundResults =>
+    _.zip(ccRounds, roundResults).map(([ccRound, previousRoundResults]) => {
+      const eventId = ccRound.eventObject.id;
+      const people = _(previousRoundResults)
+        .filter('top_position')
+        .sortBy(result => parseInt(result.position, 10))
+        .map(personFromCubecompsResult)
+        .value();
+      const wcifEvent = _.find(wcif.events, { id: eventId });
+      const wcifRound = _.find(wcifEvent.rounds, { id: `${eventId}-r${ccRound.id}` });
+      const groups = createGroups(wcifRound.scrambleSetCount, people, eventId);
+      return [eventId, { groups, people, peopleSolvingSideEvent: [], roundNumber: ccRound.id }];
+    })
+  );
 }

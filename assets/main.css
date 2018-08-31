@@ -54,7 +54,8 @@ label[for="simultaneous-events-input"]:not(.is-checked) + #simultaneous-events-t
 
 /* Dialog */
 
-.scramblers-dialog {
+.scramblers-dialog,
+.scorecards-dialog {
   max-width: 80%;
   width: 400px;
 }
@@ -62,6 +63,10 @@ label[for="simultaneous-events-input"]:not(.is-checked) + #simultaneous-events-t
 .scramblers-dialog .scramblers-list {
   overflow: auto;
   height: 300px;
+}
+
+.scorecards-dialog .competition-name {
+  font-weight: bold;
 }
 
 /* Loading screen */

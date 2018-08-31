@@ -10,8 +10,10 @@ import _ from 'lodash';
 import { $, $all } from './helpers';
 import { catchErrors } from './errors';
 import { ErrorDialog } from './dialogs/error-dialog';
+import { ScorecardsDialog } from './dialogs/scorecards-dialog';
 import { signIn, signOut, isSignedIn, getUpcomingManageableCompetitions, getCompetitionWcif, saveCompetitionEventsWcif } from './wca-api';
-import { validateEventsWcif } from './events';
+import { getCompetitionsInProgress, getCompetitionEvents } from './cubecomps-api';
+import { validateEventsWcif, eventObjects } from './events';
 import { peopleFromCsvFile, peopleWithWcaData } from './people';
 import { assignGroups, assignScrambling, assignJudging, setWcifScrambleGroupsCount } from './groups-assignment';
 import { ScorecardsPdf } from './pdfs/scorecards-pdf';
@@ -29,16 +31,49 @@ const errorHandlers = catchErrors({
 
 if (isSignedIn()) {
   document.body.classList.add('user-signed-in');
-  getUpcomingManageableCompetitions()
-    .then(competitions => {
+  Promise.all([
+    getUpcomingManageableCompetitions(),
+    getCompetitionsInProgress()
+  ]).then(([wcaCompetitions, ccCompetitions]) => {
+      /* Add options to the competition select. */
       $('#competition-select').innerHTML = '';
-      competitions.reverse().forEach(competition => {
+      wcaCompetitions.reverse().forEach(competition => {
         const option = document.createElement('option');
         option.value = JSON.stringify(competition);
         option.innerText = competition.short_name;
         $('#competition-select').appendChild(option);
       });
       $('#competition-select').dispatchEvent(new Event('change'))
+      /* If one of the manageable competitions is ongoing on Cubecomps,
+         show a dialog for printing scorecards for subsequent rounds. */
+      const competitionsPair = ccCompetitions
+        .map(ccCompetition => {
+          const wcaCompetition = wcaCompetitions.find(wcaCompetition =>
+            wcaCompetition.name.startsWith(ccCompetition.name)
+          );
+          return wcaCompetition ? [ccCompetition, wcaCompetition] : null;
+        })
+        .find(pair => pair !== null);
+      if (competitionsPair) {
+        const [ccCompetition, wcaCompetition] = competitionsPair;
+        Promise.all([
+          getCompetitionEvents(ccCompetition.id),
+          getCompetitionWcif(wcaCompetition.id)
+        ]).then(([ccEvents, wcif]) => {
+          const ccRounds = _.compact(ccEvents.map(ccEvent => {
+            const eventObject = _.find(eventObjects, { name: ccEvent.name });
+            const [first, ...rest] = _.sortBy(ccEvent.rounds, 'id');
+            const nextRound = _(rest).filter({ finished: false, live: false }).minBy('id');
+            if (first.finished && nextRound) {
+              nextRound.eventObject = eventObject;
+              return nextRound;
+            }
+          }));
+          if (ccRounds.length > 0) {
+            new ScorecardsDialog(ccCompetition, ccRounds, wcif).show();
+          }
+        });
+      }
     })
     .catch(errorHandlers);
 }
