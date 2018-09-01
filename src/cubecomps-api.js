@@ -20,7 +20,9 @@ export function getCompetitionResults(competitionId, eventId, roundId) {
 }
 
 function cubecompsApiFetch(path, fetchOptions = {}) {
-  const baseApiUrl = `http://m.cubecomps.com`;
+  /* We use a proxy server using HTTPS to avoid 'Mixed content' errors.
+     See https://johnalcher.me/blog/bypassing-mixed-content-error-in-github-pages */
+  const baseApiUrl = `https://cors-anywhere.herokuapp.com/http://m.cubecomps.com`;
 
   return fetch(`${baseApiUrl}${path}.json`, fetchOptions)
     .then(response => response.ok
