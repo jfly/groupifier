@@ -7,7 +7,7 @@ import 'spinkit/css/spinners/11-folding-cube.css';
 
 import _ from 'lodash';
 
-import { $, $all } from './helpers';
+import { $, $all, downloadAsJSON } from './helpers';
 import { catchErrors } from './errors';
 import { ErrorDialog } from './dialogs/error-dialog';
 import { ScorecardsDialog } from './dialogs/scorecards-dialog';
@@ -107,6 +107,7 @@ $('#generate').addEventListener('click', () => {
   const judgeOwnEventsOnly = $('#judge-own-events-only-input').checked;
   const askForScramblers = $('#ask-for-scramblers-input').checked;
   const preferLocalNames = $('#prefer-local-names-input').checked;
+  const exportJson = $('#export-json-input').checked;
   /* People that shouldn't be assigned tasks. */
   const wcaIdsToSkip = [];
   skipNewcomers && wcaIdsToSkip.push("");
@@ -127,6 +128,10 @@ $('#generate').addEventListener('click', () => {
     return assignScrambling(eventsWithData, scramblersCount, askForScramblers, wcaIdsToSkip, tasksMinAge).then(() => {
       assignJudging(people, eventsWithData, stationsCount, staffJudgesCount, wcaIdsToSkip, judgeOwnEventsOnly, tasksMinAge);
       setScrambleGroupsCount && setWcifScrambleGroupsCount(wcif, eventsWithData, stationsCount);
+      exportJson && downloadAsJSON(
+        _.map(people, person => _.pick(person, ['id', 'name', 'wcaId', 'solving', 'scrambling', 'judging'])),
+        'people.json'
+      );
       return Promise.all([
         setScrambleGroupsCount && saveCompetitionEventsWcif(wcif),
         /* PDFs are generated synchronously, so there's no point in invoking all `download`s at once.

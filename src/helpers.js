@@ -14,6 +14,17 @@ export function addEventListenerOnce(element, eventName, callback) {
   });
 };
 
+export function downloadAsJSON(object, filename = 'download.json') {
+  const json = JSON.stringify(object, null, 2);
+  const dataUri = 'data:text/json;charset=utf-8,' + encodeURIComponent(json);
+  const a = document.createElement('a');
+  a.setAttribute('href', dataUri);
+  a.setAttribute('download', filename);
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+};
+
 /* WCA formatting */
 
 export function cutoffToString(cutoff, eventId) {
