@@ -62,11 +62,16 @@ if (isSignedIn()) {
         ]).then(([ccEvents, wcif]) => {
           const ccRounds = _.compact(ccEvents.map(ccEvent => {
             const eventObject = _.find(eventObjects, { name: ccEvent.name });
-            const [first, ...rest] = _.sortBy(ccEvent.rounds, 'id');
-            const nextRound = _(rest).filter({ finished: false, live: false }).minBy('id');
-            if (first.finished && nextRound) {
-              nextRound.eventObject = eventObject;
-              return nextRound;
+            const subsequentRounds = _.sortBy(ccEvent.rounds, 'id').slice(1);
+            const nextRound = _(subsequentRounds).filter({ finished: false, live: false }).minBy('id');
+            if (nextRound) {
+              const previousRound = ccEvent.rounds.find(ccRound =>
+                parseInt(ccRound.id, 10) === parseInt(nextRound.id, 10) - 1
+              );
+              if (previousRound.finished) {
+                nextRound.eventObject = eventObject;
+                return nextRound;
+              }
             }
           }));
           if (ccRounds.length > 0) {
