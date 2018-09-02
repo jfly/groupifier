@@ -15,7 +15,7 @@ export class ScorecardsDialog extends Dialog {
           Print scorecards for subsequent rounds of <span class="competition-name">${ccCompetition.name}</span>.
           This uses Cubecomps data and generates groups according to the scramble set count specified on the WCA website.
         </span>
-        <ul class="mdl-list scramblers-list">
+        <ul class="mdl-list rounds-list">
         ${ccRounds.map((ccRound, index) => `
           <li class="mdl-list__item">
             <span class="mdl-list__item-primary-content">${ccRound.eventObject.name} - ${ccRound.name}</span>

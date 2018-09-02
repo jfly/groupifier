@@ -60,7 +60,8 @@ label[for="simultaneous-events-input"]:not(.is-checked) + #simultaneous-events-t
   width: 400px;
 }
 
-.scramblers-dialog .scramblers-list {
+.scramblers-dialog .scramblers-list,
+.scorecards-dialog .rounds-list {
   overflow: auto;
   height: 300px;
 }
