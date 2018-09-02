@@ -6,9 +6,9 @@ class CubecompsApiError extends ApplicationError {
   get type() { return 'CubecompsApiError'; }
 }
 
-export function getCompetitionsInProgress() {
+export function getCompetitions() {
   return cubecompsApiFetch('/competitions')
-    .then(competitions => competitions['in_progress']);
+    .then(competitions => _.flatten(_.values(competitions)));
 }
 
 export function getCompetitionEvents(competitionId) {
