@@ -109,6 +109,9 @@ $('#generate').addEventListener('click', () => {
   const askForScramblers = $('#ask-for-scramblers-input').checked;
   const preferLocalNames = $('#prefer-local-names-input').checked;
   const exportJson = $('#export-json-input').checked;
+  const showSignature = $('#show-signature-input').checked;
+  const showChecker = $('#show-checker-input').checked;
+
   /* People that shouldn't be assigned tasks. */
   const wcaIdsToSkip = [];
   skipNewcomers && wcaIdsToSkip.push("");
@@ -143,7 +146,7 @@ $('#generate').addEventListener('click', () => {
         [
           new SummaryPdf(eventsWithData),
           new PersonalCardsPdf(people),
-          new ScorecardsPdf(eventsWithData, wcif),
+          new ScorecardsPdf(eventsWithData, wcif, { showSignature, showChecker }),
         ].reduce((promise, pdf) => promise.then(() => pdf.download()), Promise.resolve())
       ]);
     });

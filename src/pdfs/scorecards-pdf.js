@@ -8,28 +8,11 @@ const pageWidth = 595;
 const pageHeight = 842;
 const scorecardMargin = 20;
 
-const showSignature = true;
-const showChecker = true;
-
-function pickColumns(columns) {
-    const out = columns.slice(0, 1);
-    if (showSignature) {
-        out.push(columns[1]);
-    }
-    if (showChecker) {
-        out.push(columns[2]);
-    }
-    out.push(...columns.slice(3));
-    return out;
-}
-
-function numColumns() {
-    return 4 + (showSignature ? 1 : 0) + (showChecker ? 1 : 0);
-}
-
 export class ScorecardsPdf extends PdfDocument {
-  constructor(eventsWithData, wcif) {
+  constructor(eventsWithData, wcif, options) {
     super('scorecards.pdf');
+    this.showSignature = options.showSignature;
+    this.showChecker = options.showChecker;
     const groupsByEvent = _.mapValues(_.fromPairs(eventsWithData), 'groups');
     const events = eventObjects.filter(eventObject => groupsByEvent[eventObject.id] && eventObject.id !== '333fm');
     const maxAttemptsCountByFormat = { '1': 1, '2': 2, '3': 3, 'm': 3, 'a': 5 };
@@ -79,6 +62,22 @@ export class ScorecardsPdf extends PdfDocument {
     };
   }
 
+  pickColumns(columns) {
+      const out = columns.slice(0, 1);
+      if (this.showSignature) {
+          out.push(columns[1]);
+      }
+      if (this.showChecker) {
+          out.push(columns[2]);
+      }
+      out.push(...columns.slice(3));
+      return out;
+  }
+
+  numColumns() {
+      return 4 + (this.showSignature ? 1 : 0) + (this.showChecker ? 1 : 0);
+  }
+
   scorecard(scorecardNumber, competitionName, eventObject, roundNumber, groupId, person, maxAttemptsCount, cutoff, timeLimit) {
     const columnLabels = (labels, style = {}) =>
       labels.map(label => _.assign({ border: [false, false, false, false], fontSize: 10, text: label }, style));
@@ -109,17 +108,17 @@ export class ScorecardsPdf extends PdfDocument {
       {
         margin: [0, 10, 0, 0],
         table: {
-          widths: pickColumns([16, 30, 30, '*', 30, 30]), /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */
+          widths: this.pickColumns([16, 30, 30, '*', 30, 30]), /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */
           body: [
-            columnLabels(pickColumns(['', 'Scr', 'Check', 'Result', 'Judge', 'Comp']), { alignment: 'center' }),
+            columnLabels(this.pickColumns(['', 'Scr', 'Check', 'Result', 'Judge', 'Comp']), { alignment: 'center' }),
             ..._.range(1, maxAttemptsCount + 1)
               .map(attemptNumber => [
-                pickColumns([{ text: attemptNumber, border: [false, false, false, false], fontSize: 20, alignment: 'center', bold: true }, {}, {}, {}, {}, {}])
+                this.pickColumns([{ text: attemptNumber, border: [false, false, false, false], fontSize: 20, alignment: 'center', bold: true }, {}, {}, {}, {}, {}])
               ])
               .reduce((rows1, rows2, attemptsCount) =>
                 rows1.concat([[
                   {
-                    border: [false, false, false, false], colSpan: numColumns(), margin: [0, 1],
+                    border: [false, false, false, false], colSpan: this.numColumns(), margin: [0, 1],
                     columns: (attemptsCount === _.get(cutoff, 'numberOfAttempts') ? [{
                       canvas: [{
                         type: 'line',
@@ -131,9 +130,9 @@ export class ScorecardsPdf extends PdfDocument {
                   }
                 ]], rows2)
               ),
-            [{ text: 'Extra attempt', border: [false, false, false, false], colSpan: numColumns(), margin: [0, 1], fontSize: 10 }],
-            pickColumns([{ text: '_', border: [false, false, false, false], fontSize: 20, alignment: 'center', bold: true }, {}, {}, {}, {}, {}]),
-            [{ text: '', border: [false, false, false, false], colSpan: numColumns(), margin: [0, 1] }]
+            [{ text: 'Extra attempt', border: [false, false, false, false], colSpan: this.numColumns(), margin: [0, 1], fontSize: 10 }],
+            this.pickColumns([{ text: '_', border: [false, false, false, false], fontSize: 20, alignment: 'center', bold: true }, {}, {}, {}, {}, {}]),
+            [{ text: '', border: [false, false, false, false], colSpan: this.numColumns(), margin: [0, 1] }]
           ]
         }
       },
